@@ -2,7 +2,7 @@
 
 Tracks when Walmart and IGA in Saint-Hyacinthe restock carrot juice, brand by brand.
 A scheduled task on a home PC checks every 3 hours and pushes the results here;
-GitHub Pages serves the page: https://kourosch.github.io/carrot-juice-tracker/
+GitHub Pages serves the page: https://greenman605.github.io/carrot-juice-tracker/
 
 Why not GitHub Actions? Walmart and IGA both block cloud servers (Walmart answers
 HTTP 429, IGA HTTP 403 from GitHub's runners), while the same requests work from a home
@@ -20,7 +20,7 @@ connection.
 
 ## Use it
 
-- **Hosted:** https://kourosch.github.io/carrot-juice-tracker/
+- **Hosted:** https://greenman605.github.io/carrot-juice-tracker/
 - **Check now:** double-click `run_local.bat` (checks, pushes to GitHub, opens the page), or
   `run_local.bat view` to just open the local copy.
 - **Schedule:** `schedule_task.ps1` registers the Windows task *Carrot juice tracker*
