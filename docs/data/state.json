@@ -1,58 +1,58 @@
 {
  "schema": 1,
- "updated": "2026-11-24T21:51:02Z",
+ "updated": "2026-11-24T22:15:56Z",
  "stores": {
   "walmart-3137": {
    "chain": "walmart",
    "name": "Walmart Supercentre Saint-Hyacinthe",
    "short": "Walmart",
    "address": "5950 rue Martineau, Saint-Hyacinthe, QC J2R 2H6",
-   "last_attempt": "2026-11-24T21:51:02Z",
+   "last_attempt": "2026-11-24T22:15:56Z",
    "last_ok": "2026-11-24T21:51:02Z",
-   "last_error": null,
+   "last_error": "Blocked by Walmart's bot check: Walmart bot check on nearByNodes (HTTP 429)",
    "online": true,
    "default_store_set": true,
    "note": null,
-   "health": "ok"
+   "health": "error"
   },
   "iga-10713": {
    "chain": "iga",
    "name": "IGA extra Alimentation Sogesco",
    "short": "IGA extra Sogesco",
    "address": "3000 boul. Laframboise, Saint-Hyacinthe, QC J2S 4Z4",
-   "last_attempt": "2026-11-24T21:51:02Z",
+   "last_attempt": "2026-11-24T22:15:56Z",
    "last_ok": "2026-11-24T21:51:02Z",
-   "last_error": null,
+   "last_error": "Blocked by IGA's bot protection: IGA refused /fr (HTTP 403)",
    "online": true,
    "default_store_set": true,
    "note": null,
-   "health": "ok"
+   "health": "error"
   },
   "iga-14285": {
    "chain": "iga",
    "name": "IGA Saint-Hyacinthe Laurier Ouest",
    "short": "IGA Laurier Ouest",
    "address": "5445 rue Laurier Ouest, Saint-Hyacinthe, QC J2S 3V6",
-   "last_attempt": "2026-11-24T21:51:02Z",
+   "last_attempt": "2026-11-24T22:15:56Z",
    "last_ok": "2026-11-24T21:51:02Z",
-   "last_error": null,
+   "last_error": "Blocked by IGA's bot protection: IGA refused /fr (HTTP 403)",
    "online": true,
    "default_store_set": true,
    "note": null,
-   "health": "ok"
+   "health": "error"
   },
   "iga-10714": {
    "chain": "iga",
    "name": "IGA Saint-Hyacinthe Saint-Charles",
    "short": "IGA Saint-Charles",
    "address": "2260 rue Saint-Charles, Saint-Hyacinthe, QC J2T 1V5",
-   "last_attempt": "2026-11-24T21:51:02Z",
+   "last_attempt": "2026-11-24T22:15:56Z",
    "last_ok": "2026-11-24T21:51:02Z",
-   "last_error": null,
+   "last_error": "Blocked by IGA's bot protection: IGA refused /fr (HTTP 403)",
    "online": false,
    "default_store_set": false,
    "note": "No online ordering at this store, so IGA publishes no stock for it.",
-   "health": "no_online_inventory"
+   "health": "error"
   }
  },
  "products": {
@@ -303,6 +303,28 @@
  },
  "events": [],
  "runs": [
+  {
+   "ts": "2026-11-24T22:15:56Z",
+   "seconds": 6,
+   "stores": {
+    "walmart-3137": {
+     "ok": false,
+     "error": "Blocked by Walmart's bot check: Walmart bot check on nearByNodes (HTTP 429)"
+    },
+    "iga-10713": {
+     "ok": false,
+     "error": "Blocked by IGA's bot protection: IGA refused /fr (HTTP 403)"
+    },
+    "iga-14285": {
+     "ok": false,
+     "error": "Blocked by IGA's bot protection: IGA refused /fr (HTTP 403)"
+    },
+    "iga-10714": {
+     "ok": false,
+     "error": "Blocked by IGA's bot protection: IGA refused /fr (HTTP 403)"
+    }
+   }
+  },
   {
    "ts": "2026-11-24T21:51:02Z",
    "seconds": 83,
