@@ -527,9 +527,10 @@ function renderBest() {
     let verdict = '';
     if (p.learning) {
       const pct = Math.round(100 * Math.min(1, p.nPrecise / 3, p.days / 7));
+      const dd = Math.max(1, Math.round(p.days));
       verdict = `<p class="verdict">Still learning this store's schedule</p>
         <div class="progress" role="progressbar" aria-label="Learning progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${Math.max(3, pct)}%"></span></div>
-        <div class="small muted">${p.n} deliver${p.n === 1 ? 'y' : 'ies'} seen in ${Math.max(1, Math.round(p.days))} day${Math.round(p.days) === 1 ? '' : 's'}. A best time appears after about a week and 3 deliveries.</div>`;
+        <div class="small muted">${p.n} deliver${p.n === 1 ? 'y' : 'ies'} seen ${p.days < 1.5 ? 'since tracking started today' : `in ${dd} days`}. A best time appears after about a week and 3 deliveries.</div>`;
     } else if (!p.topDays.length) {
       verdict = `<p class="verdict">No regular delivery day yet</p>`;
     } else {
@@ -573,9 +574,13 @@ function drawSparks() {
     const pts = hist.filter(([t]) => t >= x0);
     const before = hist.filter(([t]) => t < x0).pop();
     if (before) pts.unshift([x0, before[1]]);
-    if (!pts.length) { el.innerHTML = '<div class="none">Stock history starts with the next checks.</div>'; el._spark = null; continue; }
+    const last = Math.min(x1, +new Date((st && st.last_checked) || 0));
+    if (!pts.length || last - pts[0][0] < 12 * HOUR) {
+      el.innerHTML = '<div class="none">The chart fills in over the next few days of checks.</div>';
+      el._spark = null;
+      continue;
+    }
     const w = el.clientWidth || 300, h = 64, top = 6, bot = 3;
-    const last = Math.min(x1, +new Date(st.last_checked));
     const maxQ = Math.max(4, ...pts.map(p => p[1]));
     const X = t => ((t - x0) / (x1 - x0)) * w, Y = q => top + (1 - q / maxQ) * (h - top - bot);
     let d = `M${X(pts[0][0]).toFixed(1)},${Y(pts[0][1]).toFixed(1)}`;
