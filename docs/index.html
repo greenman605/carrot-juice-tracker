@@ -17,6 +17,7 @@
     --in: #2b8a3e; --in-soft: #e6f4ea; --out: #b02a2a; --out-soft: #fbeaea;
     --none: #8a847a; --none-soft: #f1eee9;
     --radius: 10px; --pad: 20px;
+    --chart: #d9480f; --star: #d99a00;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -24,6 +25,7 @@
       --accent: #ff8a4c; --accent-soft: #3a2416;
       --in: #6cc581; --in-soft: #1d3324; --out: #f08080; --out-soft: #3a1f1f;
       --none: #9a948a; --none-soft: #2a2825;
+      --chart: #e8692a; --star: #f2c14e;
     }
   }
   * { box-sizing: border-box; }
@@ -137,6 +139,50 @@
   .h-when { grid-area: when; } .h-change { grid-area: change; } .h-prod { grid-area: prod; min-width: 0; }
   .h-store { grid-area: store; } .h-price { grid-area: price; text-align: right; }
 
+  /* Julianne's greeting */
+  .hero { margin-top: 18px; padding: 18px 20px; background: var(--accent-soft); border-radius: 14px;
+          border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line)); }
+  .hero .hello { margin: 0 0 6px; font-size: 21px; font-weight: 700; letter-spacing: -0.01em; }
+  .hero p { margin: 0; }
+  .hero .favline { margin-top: 10px; font-size: 14px; }
+  .picks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .pick { display: flex; gap: 10px; align-items: center; background: var(--card); border: 1px solid var(--line);
+          border-radius: 10px; padding: 8px 12px 8px 8px; min-width: 0; flex: 1 1 250px; }
+  .pick .t1 { font-weight: 600; font-size: 14px; }
+  .pick .t2 { font-size: 12px; color: var(--muted); }
+  .fresh-txt { color: var(--accent); font-weight: 600; }
+
+  /* favourites */
+  .star { border: 0; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted);
+          padding: 0; min-width: 36px; min-height: 32px; margin: -6px -8px -6px 0; }
+  .star.on { color: var(--star); }
+  .brand > header .bh { display: flex; align-items: center; gap: 4px; }
+  .brand.fav { border-color: color-mix(in srgb, var(--star) 55%, var(--line)); }
+
+  /* best time to buy */
+  .intro { color: var(--muted); font-size: 14px; margin: -4px 0 12px; max-width: 760px; }
+  .best { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+  .best > .card { padding: 14px 16px; }
+  .best > .wide { grid-column: 1 / -1; }
+  .best h3 { margin: 0; font-size: 15px; }
+  .best .verdict { font-size: 17px; font-weight: 700; margin: 8px 0 4px; }
+  .best dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 8px 0 0; font-size: 14px; }
+  .best dt { color: var(--muted); }
+  .best dd { margin: 0; }
+  .best .note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .progress { height: 6px; border-radius: 3px; background: var(--none-soft); margin: 10px 0 4px; overflow: hidden; }
+  .progress > span { display: block; height: 100%; border-radius: 3px; background: var(--chart); }
+  .sparks { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px 20px;
+            margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .spark h4 { margin: 0 0 4px; font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; }
+  .spark h4 .now { font-weight: 400; color: var(--muted); white-space: nowrap; }
+  .spark .plot { position: relative; height: 64px; touch-action: pan-y; }
+  .spark svg { display: block; width: 100%; height: 64px; overflow: visible; }
+  .spark .axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .spark .none { font-size: 12px; color: var(--muted); padding: 22px 0; }
+  .tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--bg);
+         font-size: 12px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); }
+
   details { margin-top: 36px; }
   summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
   .how { color: var(--muted); font-size: 14px; max-width: 760px; padding-left: 20px; }
@@ -212,6 +258,14 @@
     }
     .h-when { text-align: right; font-size: 12px; color: var(--muted); }
     .h-store { font-size: 13px; color: var(--muted); }
+
+    .hero { padding: 14px; margin-top: 14px; }
+    .hero .hello { font-size: 18px; }
+    .pick { flex-basis: 100%; }
+    .best { grid-template-columns: 1fr; }
+    .best > .card { padding: 13px 12px; }
+    .best .verdict { font-size: 16px; }
+    .sparks { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -219,35 +273,42 @@
 <main>
   <div class="row">
     <div>
-      <h1>🥕 Carrot juice restock tracker</h1>
+      <h1 id="title">🥕 Carrot juice restock tracker</h1>
       <p class="sub">Walmart and IGA in Saint-Hyacinthe · stock checked every few hours</p>
     </div>
     <div class="lastcheck small" id="lastcheck"></div>
   </div>
 
+  <section class="hero" id="hero" aria-live="polite"></section>
+
   <nav class="jump" aria-label="Sections">
-    <a href="#sec-recent">Restocks</a>
+    <a href="#sec-best">Best time</a>
     <a href="#sec-now">In stock now</a>
-    <a href="#sec-patterns">When</a>
+    <a href="#sec-recent">Restocks</a>
     <a href="#sec-history">History</a>
   </nav>
 
   <section class="stores" id="stores" aria-label="Stores"></section>
 
-  <h2 id="sec-recent">Recent restocks</h2>
-  <div class="card" id="recent"></div>
+  <h2 id="sec-best">Freshest time to buy</h2>
+  <p class="intro">Carrot juice is freshest right after a delivery, when new bottles with the latest best-before dates reach the shelf. Stores usually put older bottles in front, so check the date and reach to the back.</p>
+  <div class="best" id="best"></div>
 
   <h2 id="sec-now">Right now</h2>
   <div class="toolbar">
     <div class="seg" id="filter">
       <button data-v="all" class="on">All</button>
-      <button data-v="in">In stock only</button>
+      <button data-v="in">In stock</button>
+      <button data-v="fav">★ Favourites</button>
     </div>
     <select id="storefilter" aria-label="Store"><option value="">All stores</option></select>
   </div>
   <div id="now"></div>
 
-  <h2 id="sec-patterns">When restocks happen</h2>
+  <h2 id="sec-recent">Recent restocks</h2>
+  <div class="card" id="recent"></div>
+
+  <h2 id="sec-patterns">Restock patterns</h2>
   <p class="muted small" id="patterns-note"></p>
   <div class="patterns" id="patterns"></div>
 
@@ -270,6 +331,8 @@
       <li><strong>Walmart</strong> reports a quantity: the units it will sell online from that store. A <em>restock</em> is when a product goes from out of stock to in stock; a <em>top-up</em> is when the quantity jumps by 3 or more without selling out first.</li>
       <li><strong>IGA</strong> only says whether a product is available at the selected store, with no quantity. IGA Saint-Charles does not take online orders, so IGA publishes no stock for it.</li>
       <li>Times are when the change was <em>detected</em>; the change happened some time since the previous check.</li>
+      <li><strong>Freshest time to buy</strong> groups restocks seen in the same check into one delivery, then looks for the days and times deliveries usually show up. It needs about a week and at least 3 deliveries per store before suggesting a time. A product counts as <em>fresh</em> for 48 hours after a delivery.</li>
+      <li>Favourites (★) are saved in this browser only.</li>
       <li>Online stock is the stores' own figure, but it can lag the shelf by a few hours, and Walmart holds back a small buffer.</li>
     </ul>
   </details>
@@ -341,6 +404,222 @@ function windowText(ev) {
 }
 const pillClass = t => t === 'sold_out' ? 'out' : t === 'top_up' ? 'top' : 'in';
 
+// ---------- freshness, delivery patterns, favourites ----------
+const HOUR = 3600e3, DAYMS = 864e5, SPARK_DAYS = 14;
+const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const BUCKET_PHRASE = ['overnight', 'in the morning', 'in the afternoon', 'in the evening'];
+const PART = ['overnight', 'morning', 'afternoon', 'evening'];
+const freshHours = () => S().fresh_hours || 48;
+const isFresh = st => !!(st.in_stock && st.last_restock && Date.now() - new Date(st.last_restock) <= freshHours() * HOUR);
+const bucketOf = hour => BUCKETS.findIndex(([, lo, hi]) => hour >= lo && hour < hi);
+const brandOf = st => (S().products[st.product] || {}).brand;
+
+function trackingDays() {
+  const s = S(), first = s.tracking_since || (s.runs.length ? s.runs[s.runs.length - 1].ts : null);
+  return first ? (Date.now() - new Date(first)) / DAYMS : 0;
+}
+// One delivery = every restock or top-up a store showed in the same check.
+function deliveries(store) {
+  const seen = new Map();
+  for (const e of S().events) {
+    if (e.type === 'sold_out' || e.store !== store || seen.has(e.ts)) continue;
+    const t1 = +new Date(e.ts), t0 = e.after ? +new Date(e.after) : t1;
+    seen.set(e.ts, { t: (t0 + t1) / 2, t1, precise: t1 - t0 <= 8 * HOUR });
+  }
+  return [...seen.values()].sort((a, b) => b.t1 - a.t1);
+}
+function median(a) {
+  if (!a.length) return null;
+  const s = [...a].sort((x, y) => x - y), m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+function storePattern(store) {
+  const dels = deliveries(store), precise = dels.filter(d => d.precise), days = trackingDays();
+  const gaps = dels.slice(0, -1).map((d, i) => (d.t - dels[i + 1].t) / DAYMS);
+  const p = { n: dels.length, nPrecise: precise.length, days, last: dels[0] || null, medianGap: median(gaps) };
+  if (precise.length < 3 || days < 7) return Object.assign(p, { learning: true });
+  // Bucket by when the delivery was first seen (stock is on the shelf by then), not the
+  // middle of the check window, so the advice never sends anyone too early.
+  const wd = Array(7).fill(0), bk = Array(4).fill(0);
+  for (const d of precise) { const lp = localParts(d.t1); wd[lp.wd]++; bk[bucketOf(lp.hour)]++; }
+  const top = Math.max(...wd);
+  p.topDays = wd.map((c, i) => [c, i]).filter(([c]) => c >= 2 && c >= top * 0.5)
+    .sort((a, b) => b[0] - a[0]).slice(0, 3).map(([, i]) => i);
+  p.bucket = bk.indexOf(Math.max(...bk));
+  return p;
+}
+function bestBuy(day, bucket) {
+  const d = DAY_NAMES[day], n = DAY_NAMES[(day + 1) % 7];
+  return [`${d} morning`, `${d}, late morning or afternoon`, `${d} afternoon or evening`, `${d} evening or ${n} morning`][bucket];
+}
+function dayList(days) {
+  const names = [...days].sort((a, b) => a - b).map(d => DAY_NAMES[d] + 's');
+  return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+}
+// When the next usual delivery should show up: { t, label (fits "expected at X ..."), short }.
+function nextExpected(p) {
+  if (p.topDays && p.topDays.length) {
+    for (let i = 0; i < 8; i++) {
+      const t = Date.now() + i * DAYMS, lp = localParts(t);
+      if (!p.topDays.includes(lp.wd) || (i === 0 && lp.hour >= BUCKETS[p.bucket][2])) continue;
+      if (i === 0) { const l = ['before 6 a.m.', 'this morning', 'this afternoon', 'this evening'][p.bucket]; return { t, label: l, short: l[0].toUpperCase() + l.slice(1) }; }
+      if (i === 1) return { t, label: `tomorrow ${PART[p.bucket]}`, short: `Tomorrow ${PART[p.bucket]}` };
+      const day = fmt(t, { weekday: 'long', month: 'short', day: 'numeric' });
+      return { t, label: `on ${day} (${PART[p.bucket]})`, short: `${day}, ${PART[p.bucket]}` };
+    }
+  }
+  if (p.medianGap && p.last) {
+    const t = p.last.t + p.medianGap * DAYMS;
+    if (t <= Date.now()) return { t: Date.now(), label: 'any time now', short: 'Any time now' };
+    const day = fmt(t, { weekday: 'long', month: 'short', day: 'numeric' });
+    return { t, label: `around ${day}`, short: `Around ${day}` };
+  }
+  return null;
+}
+
+const FAV_KEY = 'carrot-favs';
+function loadFavs() { try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch { return new Set(); } }
+function saveFavs() { try { localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); } catch { /* private mode */ } }
+let favs = loadFavs();
+
+function greeting() {
+  const h = localParts(Date.now()).hour;
+  return h < 5 ? 'Hi' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+}
+function renderHero() {
+  const s = S(), name = s.personalize_for;
+  const fresh = Object.values(s.status).filter(isFresh)
+    .sort((a, b) => (favs.has(brandOf(b)) - favs.has(brandOf(a))) || (new Date(b.last_restock) - new Date(a.last_restock)));
+  let msg, picks = '';
+  if (fresh.length) {
+    const favFresh = fresh.some(st => favs.has(brandOf(st)));
+    msg = `${fresh.length === 1 ? 'One carrot juice was' : `${fresh.length} carrot juices were`} freshly restocked in the last ${freshHours()} hours${favFresh ? ', including one of your favourites' : ''}. Freshest picks:`;
+    picks = `<div class="picks">${fresh.slice(0, 3).map(st => {
+      const p = s.products[st.product] || {};
+      return `<div class="pick">${thumb(p)}<div><div class="t1">${favs.has(p.brand) ? '★ ' : ''}${esc(p.brand)} <span class="muted nw">${esc(p.size || '')}</span></div>
+        <div class="t2">${esc(storeName(st.store))} · restocked ${esc(ago(st.last_restock))}${st.qty != null ? ` · ${st.qty} available` : ''}</div></div></div>`;
+    }).join('')}</div>`;
+  } else {
+    const pats = storeOrder().filter(k => s.stores[k].health === 'ok').map(k => [k, storePattern(k)]);
+    const known = pats.map(([k, p]) => [k, !p.learning && nextExpected(p)]).filter(([, nx]) => nx).sort((a, b) => a[1].t - b[1].t);
+    msg = `Nothing has been freshly restocked in the last ${freshHours()} hours. ` + (known.length
+      ? `The next fresh delivery is expected at <strong>${esc(storeName(known[0][0]))}</strong> ${esc(known[0][1].label)}.`
+      : `The tracker is still learning when each store gets its deliveries (${pats.reduce((a, [, p]) => a + p.n, 0)} seen so far). Fresh restocks will show up right here.`);
+  }
+  let favline;
+  if (favs.size) {
+    favline = '★ Your favourites: ' + [...favs].sort().map(b => {
+      const where = new Set(Object.values(s.status).filter(st => st.in_stock && brandOf(st) === b).map(st => st.store));
+      const freshAt = new Set(Object.values(s.status).filter(st => isFresh(st) && brandOf(st) === b).map(st => storeName(st.store)));
+      return `<strong>${esc(b)}</strong> ${where.size ? `in stock at ${where.size} store${where.size === 1 ? '' : 's'}` : 'not in stock anywhere right now'}${freshAt.size ? ` (fresh at ${esc([...freshAt].join(', '))})` : ''}`;
+    }).join(' · ');
+  } else {
+    favline = 'Tip: tap ☆ next to a brand under “Right now” to make it a favourite. Favourites show up first.';
+  }
+  $('hero').innerHTML = `<p class="hello">${esc(greeting())}${name ? `, ${esc(name)}` : ''} 🥕</p><p>${msg}</p>${picks}<p class="favline muted">${favline}</p>`;
+}
+
+function renderBest() {
+  const s = S();
+  const stores = storeOrder().filter(k => s.stores[k].health !== 'no_online_inventory');
+  $('best').innerHTML = stores.map(k => {
+    const st = s.stores[k], p = storePattern(k), walmart = st.chain === 'walmart';
+    let verdict = '';
+    if (p.learning) {
+      const pct = Math.round(100 * Math.min(1, p.nPrecise / 3, p.days / 7));
+      verdict = `<p class="verdict">Still learning this store's schedule</p>
+        <div class="progress" role="progressbar" aria-label="Learning progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${Math.max(3, pct)}%"></span></div>
+        <div class="small muted">${p.n} deliver${p.n === 1 ? 'y' : 'ies'} seen in ${Math.max(1, Math.round(p.days))} day${Math.round(p.days) === 1 ? '' : 's'}. A best time appears after about a week and 3 deliveries.</div>`;
+    } else if (!p.topDays.length) {
+      verdict = `<p class="verdict">No regular delivery day yet</p>`;
+    } else {
+      verdict = `<p class="verdict">Best time to buy: ${esc(bestBuy(p.topDays[0], p.bucket))}</p>`;
+    }
+    const rows = [];
+    if (p.topDays && p.topDays.length) rows.push(['Usually restocks', `${dayList(p.topDays)}, ${BUCKET_PHRASE[p.bucket]}`]);
+    const nx = !p.learning && nextExpected(p);
+    if (nx) rows.push(['Next expected', nx.short]);
+    rows.push(['Last delivery', p.last ? `${ago(p.last.t1)} · ${fmtFull(p.last.t1)}` : 'None seen yet']);
+    if (p.medianGap && p.n >= 3) rows.push(['Typical gap', p.medianGap < 1.5 ? `about every ${Math.round(p.medianGap * 24)} hours` : `about every ${Math.round(p.medianGap * 2) / 2} days`]);
+    const note = walmart
+      ? 'Each upward step in the charts is a delivery. Walmart counts what it can sell online from this store.'
+      : 'IGA does not publish quantities, so a delivery only shows up here when a product comes back after selling out.';
+    let sparks = '';
+    if (walmart) {
+      const rowsW = Object.values(s.status).filter(x => x.store === k)
+        .sort((a, b) => (favs.has(brandOf(b)) - favs.has(brandOf(a))) || String(brandOf(a)).localeCompare(String(brandOf(b))));
+      sparks = `<div class="sparks">${rowsW.map(x => {
+        const pr = s.products[x.product] || {};
+        return `<div class="spark"><h4><span>${favs.has(pr.brand) ? '★ ' : ''}${esc(pr.brand)} <span class="muted nw">${esc(pr.size || '')}</span></span>
+          <span class="now">now ${x.in_stock ? (x.qty ?? '?') : 0}</span></h4>
+          <div class="plot" data-key="${esc(`${x.store}|${x.product}`)}"></div>
+          <div class="axis"><span>${esc(fmtDay(Date.now() - SPARK_DAYS * DAYMS))}</span><span>Units available, last ${SPARK_DAYS} days</span><span>Today</span></div></div>`;
+      }).join('')}</div>`;
+    }
+    return `<div class="card${walmart ? ' wide' : ''}"><h3>${esc(st.short)}</h3>${verdict}
+      <dl>${rows.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>
+      <div class="note">${note}</div>${sparks}</div>`;
+  }).join('');
+  drawSparks();
+}
+
+// Stock-level charts: one series each (Walmart's quantity), step line + 10% area wash,
+// dots on deliveries, crosshair tooltip on hover/touch.
+function drawSparks() {
+  const s = S(), x1 = Date.now(), x0 = x1 - SPARK_DAYS * DAYMS;
+  for (const el of document.querySelectorAll('.spark .plot')) {
+    const st = s.status[el.dataset.key];
+    const hist = ((st && st.qty_history) || []).map(([t, q]) => [+new Date(t), q]);
+    const pts = hist.filter(([t]) => t >= x0);
+    const before = hist.filter(([t]) => t < x0).pop();
+    if (before) pts.unshift([x0, before[1]]);
+    if (!pts.length) { el.innerHTML = '<div class="none">Stock history starts with the next checks.</div>'; el._spark = null; continue; }
+    const w = el.clientWidth || 300, h = 64, top = 6, bot = 3;
+    const last = Math.min(x1, +new Date(st.last_checked));
+    const maxQ = Math.max(4, ...pts.map(p => p[1]));
+    const X = t => ((t - x0) / (x1 - x0)) * w, Y = q => top + (1 - q / maxQ) * (h - top - bot);
+    let d = `M${X(pts[0][0]).toFixed(1)},${Y(pts[0][1]).toFixed(1)}`;
+    for (let i = 1; i < pts.length; i++) d += `H${X(pts[i][0]).toFixed(1)}V${Y(pts[i][1]).toFixed(1)}`;
+    d += `H${X(last).toFixed(1)}`;
+    const area = `${d}V${Y(0).toFixed(1)}H${X(pts[0][0]).toFixed(1)}Z`;
+    const dots = s.events.filter(e => e.store === st.store && e.product === st.product && e.type !== 'sold_out' && +new Date(e.ts) >= x0)
+      .map(e => `<circle cx="${X(+new Date(e.ts)).toFixed(1)}" cy="${Y(e.qty ?? 0).toFixed(1)}" r="4" fill="var(--chart)" stroke="var(--card)" stroke-width="2"/>`).join('');
+    const p = s.products[st.product] || {};
+    el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img"
+        aria-label="${esc(`${p.brand} ${p.size || ''}: ${st.in_stock ? st.qty : 0} available now; ${dots ? 'deliveries marked with dots' : 'no deliveries in the last 14 days'}`)}">
+      <line x1="0" x2="${w}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)" stroke-width="1"/>
+      <path d="${area}" fill="var(--chart)" fill-opacity="0.1"/>
+      <path d="${d}" fill="none" stroke="var(--chart)" stroke-width="2" stroke-linejoin="round"/>
+      ${dots}
+      <line class="cross" x1="0" x2="0" y1="0" y2="${h}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>
+    </svg>`;
+    el._spark = { pts, x0, x1, w, last };
+  }
+}
+const tip = Object.assign(document.createElement('div'), { className: 'tip', hidden: true });
+document.body.appendChild(tip);
+function hideTip() {
+  tip.hidden = true;
+  for (const c of document.querySelectorAll('.spark .cross')) c.setAttribute('visibility', 'hidden');
+}
+function sparkHover(ev) {
+  const el = ev.target.closest && ev.target.closest('.spark .plot');
+  if (!el || !el._spark) return hideTip();
+  const sp = el._spark, r = el.getBoundingClientRect();
+  let t = sp.x0 + ((ev.clientX - r.left) / r.width) * (sp.x1 - sp.x0);
+  t = Math.max(sp.pts[0][0], Math.min(sp.last, t));
+  let q = sp.pts[0][1];
+  for (const [pt, pq] of sp.pts) { if (pt <= t) q = pq; else break; }
+  hideTip();
+  const cx = ((t - sp.x0) / (sp.x1 - sp.x0)) * sp.w;
+  const cross = el.querySelector('.cross');
+  cross.setAttribute('x1', cx); cross.setAttribute('x2', cx); cross.setAttribute('visibility', 'visible');
+  tip.textContent = `${fmtFull(t)} · ${q} available`;
+  tip.style.left = `${Math.max(90, Math.min(window.innerWidth - 90, r.left + cx))}px`;
+  tip.style.top = `${r.top}px`;
+  tip.hidden = false;
+}
+
 function renderHeader() {
   const s = S();
   if (!s.updated) { $('lastcheck').innerHTML = 'No checks yet'; return; }
@@ -404,21 +683,26 @@ function renderNow() {
   const order = storeOrder();
   const brands = {};
   for (const st of Object.values(s.status)) {
-    if (ui.filter === 'in' && !st.in_stock) continue;
-    if (ui.store && st.store !== ui.store) continue;
     const p = s.products[st.product];
     if (!p) continue;
+    if (ui.filter === 'in' && !st.in_stock) continue;
+    if (ui.filter === 'fav' && !favs.has(p.brand)) continue;
+    if (ui.store && st.store !== ui.store) continue;
     (brands[p.brand] = brands[p.brand] || []).push({ st, p });
   }
-  const names = Object.keys(brands).sort((a, b) => a.localeCompare(b));
+  const names = Object.keys(brands).sort((a, b) => (favs.has(b) - favs.has(a)) || a.localeCompare(b));
   if (!names.length) {
-    $('now').innerHTML = `<div class="card empty">${ui.filter === 'in' ? 'Nothing in stock right now for this selection.' : 'No data yet.'}</div>`;
+    const why = ui.filter === 'fav' ? (favs.size ? 'None of your favourites match this selection.' : 'No favourites yet. Tap ☆ next to a brand (under “All”) to add one.')
+      : ui.filter === 'in' ? 'Nothing in stock right now for this selection.' : 'No data yet.';
+    $('now').innerHTML = `<div class="card empty">${why}</div>`;
     return;
   }
   $('now').innerHTML = names.map(b => {
     const rows = brands[b].sort((x, y) => order.indexOf(x.st.store) - order.indexOf(y.st.store) || shortName(x.p).localeCompare(shortName(y.p)));
     const inStores = new Set(rows.filter(r => r.st.in_stock).map(r => r.st.store));
-    return `<section class="card brand"><header><h3>${esc(b)}</h3>
+    const fav = favs.has(b);
+    return `<section class="card brand${fav ? ' fav' : ''}"><header><div class="bh"><h3>${esc(b)}</h3>
+      <button class="star${fav ? ' on' : ''}" data-brand="${esc(b)}" aria-pressed="${fav}" title="${fav ? 'Remove from' : 'Add to'} favourites" aria-label="${fav ? 'Remove' : 'Add'} ${esc(b)} ${fav ? 'from' : 'to'} favourites">${fav ? '★' : '☆'}</button></div>
       <span class="small ${inStores.size ? '' : 'muted'}">${inStores.size ? `In stock at ${inStores.size} store${inStores.size === 1 ? '' : 's'}` : 'Not in stock anywhere'}</span></header>
       <div class="items-head"><span class="ih-prod">Product</span><span>Store</span><span>Status</span><span>Price</span><span>Last change</span></div>
       ${rows.map(({ st, p }) => {
@@ -426,9 +710,10 @@ function renderNow() {
         if (st.in_stock) pill = `<span class="pill in">In stock${st.qty != null ? ` · ${st.qty}` : ''}</span>`;
         else if (!st.last_in_stock) pill = `<span class="pill na" title="Never seen in stock at this store since tracking began">Not carried here</span>`;
         else pill = `<span class="pill out">Out of stock</span>`;
-        const change = st.since_first_check ? `<span class="muted">Since tracking began</span>`
+        const change = isFresh(st) ? `<span class="fresh-txt">Fresh · delivered ${esc(ago(st.last_restock))}</span>`
+          : st.since_first_check ? `<span class="muted">Since tracking began</span>`
           : `${st.in_stock ? 'Restocked' : 'Sold out'} ${esc(ago(st.since))}`;
-        const restock = st.last_restock && !(st.in_stock && st.last_restock === st.since) ? `<div class="sub2">Last restock ${esc(ago(st.last_restock))}</div>` : '';
+        const restock = st.last_restock && !isFresh(st) && !(st.in_stock && st.last_restock === st.since) ? `<div class="sub2">Last delivery ${esc(ago(st.last_restock))}</div>` : '';
         return `<div class="item">${thumb(p)}
           <div class="i-prod">${productLink(p)}<div class="meta">${esc(p.size || '')}</div></div>
           <div class="i-store">${p.size ? `<span class="st-size">${esc(p.size)} · </span>` : ''}${esc(storeName(st.store))}</div>
@@ -447,7 +732,7 @@ function heatStyle(n, max) {
 function renderPatterns() {
   const s = S();
   const evs = s.events.filter(e => e.type !== 'sold_out');
-  const days = s.runs.length ? Math.max(1, Math.round((new Date(s.runs[0].ts) - new Date(s.runs[s.runs.length - 1].ts)) / 864e5)) : 0;
+  const days = Math.max(1, Math.round(trackingDays()));
   $('patterns-note').textContent = evs.length
     ? `${evs.length} restock${evs.length === 1 ? '' : 's'} and top-ups over ${days} day${days === 1 ? '' : 's'}, by when they were detected. Patterns get more reliable after a few weeks.`
     : 'This fills in as restocks are detected. After a few weeks it shows which days and times each store usually restocks.';
@@ -510,8 +795,29 @@ function render() {
   fillSelect('storefilter', storeEntries);
   fillSelect('histstore', storeEntries);
   fillSelect('histbrand', [...new Set(Object.values(s.products).map(p => p.brand))].sort().map(b => [b, b]));
-  renderHeader(); renderStores(); renderRecent(); renderNow(); renderPatterns(); renderHistory();
+  if (s.personalize_for) {
+    $('title').textContent = `🥕 ${s.personalize_for}'s carrot juice tracker`;
+    document.title = `${s.personalize_for}'s carrot juice tracker`;
+  }
+  renderHeader(); renderHero(); renderStores(); renderBest(); renderNow(); renderRecent(); renderPatterns(); renderHistory();
 }
+
+// Favourite stars (saved in this browser).
+$('now').addEventListener('click', e => {
+  const b = e.target.closest('.star');
+  if (!b) return;
+  const brand = b.dataset.brand;
+  if (favs.has(brand)) favs.delete(brand); else favs.add(brand);
+  saveFavs();
+  renderHero(); renderNow(); renderBest();
+});
+// Chart crosshair: mouse hover, or drag a finger along the chart on a phone.
+$('best').addEventListener('pointermove', sparkHover);
+$('best').addEventListener('pointerdown', sparkHover);
+$('best').addEventListener('pointerleave', hideTip);
+window.addEventListener('scroll', hideTip, { passive: true });
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => S() && drawSparks(), 150); });
 
 $('filter').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;

@@ -1,7 +1,9 @@
 {
+  "personalize_for": "Julianne",
   "timezone": "America/Toronto",
   "check_every_hours": 3,
   "top_up_min_increase": 3,
+  "fresh_hours": 48,
   "match": {
     "product_words": ["carrot", "carotte", "carottes"],
     "juice_words": ["juice", "jus"]

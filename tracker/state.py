@@ -5,10 +5,12 @@ checks every few hours.
 """
 from __future__ import annotations
 
+import datetime as dt
 import json
 import pathlib
 
 MAX_RUNS = 120
+HISTORY_DAYS = 45
 
 
 def empty() -> dict:
@@ -37,6 +39,22 @@ def sync_stores(state: dict, cfg: dict) -> None:
                         "address": st["address"]})
     state["check_every_hours"] = cfg.get("check_every_hours", 3)
     state["timezone"] = cfg.get("timezone", "America/Toronto")
+    state["personalize_for"] = cfg.get("personalize_for")
+    state["fresh_hours"] = cfg.get("fresh_hours", 48)
+
+
+def _record_qty(cur: dict, ts: str, qty) -> None:
+    """Keep Walmart's quantity as change points (for the stock-level charts)."""
+    if qty is None:
+        return
+    hist = cur.setdefault("qty_history", [])
+    if not hist or hist[-1][1] != qty:
+        hist.append([ts, qty])
+    cutoff = (dt.datetime.fromisoformat(ts.replace("Z", "+00:00")) - dt.timedelta(days=HISTORY_DAYS))
+    cutoff_s = cutoff.isoformat().replace("+00:00", "Z")
+    # drop old points but keep the last one before the cutoff, so the line starts at the right level
+    while len(hist) > 1 and hist[1][0] <= cutoff_s:
+        hist.pop(0)
 
 
 def products_for(state: dict, chain: str) -> dict:
@@ -84,6 +102,7 @@ def apply(state: dict, result: dict, ts: str, min_increase: int = 3) -> dict:
                 "last_in_stock": ts if ob["in_stock"] else None,
                 "last_restock": None, "restocks": 0,
             }
+            _record_qty(state["status"][sk], ts, qty)
             continue
 
         event = None
@@ -103,6 +122,7 @@ def apply(state: dict, result: dict, ts: str, min_increase: int = 3) -> dict:
                 cur["last_restock"] = ts
                 cur["restocks"] = cur.get("restocks", 0) + 1
         cur.update(last_checked=ts, raw=ob["raw"], qty=qty)
+        _record_qty(cur, ts, qty)
         if ob["price"] is not None:
             cur["price"], cur["regular_price"] = ob["price"], ob["regular_price"]
         if ob["in_stock"]:
@@ -112,6 +132,8 @@ def apply(state: dict, result: dict, ts: str, min_increase: int = 3) -> dict:
 
 
 def log_run(state: dict, ts: str, summary: dict, seconds: float) -> None:
+    # The run log is capped, so remember when tracking started separately.
+    state.setdefault("tracking_since", state["runs"][-1]["ts"] if state["runs"] else ts)
     state["updated"] = ts
     state["runs"].insert(0, {"ts": ts, "seconds": round(seconds), "stores": summary})
     del state["runs"][MAX_RUNS:]
