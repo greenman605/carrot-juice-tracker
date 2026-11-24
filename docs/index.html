@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161513" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-title" content="Carrot juice">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Carrot juice restock tracker · Saint-Hyacinthe</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥕</text></svg>">
 <style>
@@ -10,77 +15,98 @@
     --bg: #faf8f5; --card: #ffffff; --ink: #1f1d1a; --muted: #6b665e; --line: #e8e3da;
     --accent: #d9480f; --accent-soft: #fff0e6;
     --in: #2b8a3e; --in-soft: #e6f4ea; --out: #b02a2a; --out-soft: #fbeaea;
-    --none: #8a847a; --none-soft: #f1eee9; --warn: #b35c00; --warn-soft: #fff4e0;
-    --radius: 10px;
+    --none: #8a847a; --none-soft: #f1eee9;
+    --radius: 10px; --pad: 20px;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #161513; --card: #201f1c; --ink: #ece8e1; --muted: #a39d93; --line: #34312c;
       --accent: #ff8a4c; --accent-soft: #3a2416;
       --in: #6cc581; --in-soft: #1d3324; --out: #f08080; --out-soft: #3a1f1f;
-      --none: #9a948a; --none-soft: #2a2825; --warn: #f0a24a; --warn-soft: #3a2c16;
+      --none: #9a948a; --none-soft: #2a2825;
     }
   }
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  main { max-width: 1080px; margin: 0 auto; padding: 28px 20px 60px; }
-  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
-  h2 { font-size: 17px; margin: 36px 0 12px; }
+         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+         -webkit-tap-highlight-color: transparent; }
+  main { max-width: 1080px; margin: 0 auto;
+         padding: 28px max(var(--pad), env(safe-area-inset-right)) 60px max(var(--pad), env(safe-area-inset-left)); }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; line-height: 1.2; }
+  h2 { font-size: 17px; margin: 36px 0 12px; scroll-margin-top: 64px; }
   .sub { color: var(--muted); margin: 0; }
-  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; justify-content: space-between; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; justify-content: space-between; }
   .muted { color: var(--muted); }
   .small { font-size: 13px; }
   a { color: inherit; text-decoration-color: var(--line); text-underline-offset: 2px; }
   a:hover { text-decoration-color: var(--accent); }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+  .empty { padding: 16px; color: var(--muted); }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .nw { white-space: nowrap; }
 
+  /* header */
   .lastcheck { text-align: right; }
-  .lastcheck strong { font-variant-numeric: tabular-nums; }
+  .lastcheck .lc-next { display: block; color: var(--muted); }
 
+  /* section jump bar (phones only) */
+  .jump { display: none; }
+
+  /* stores */
   .stores { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-top: 20px; }
   .store { padding: 12px 14px; }
   .store .name { font-weight: 600; }
   .store .addr { font-size: 13px; color: var(--muted); }
   .store .health { font-size: 13px; margin-top: 8px; display: flex; gap: 6px; align-items: baseline; }
+  .short, .brief, .st-size { display: none; }
   .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; transform: translateY(-1px); }
   .dot.ok { background: var(--in); } .dot.error { background: var(--out); } .dot.none { background: var(--none); }
   .chain { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
 
+  /* recent restocks feed */
   .feed { list-style: none; margin: 0; padding: 0; }
-  .feed li { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center;
+  .feed li { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 4px 12px; align-items: center;
              padding: 10px 14px; border-top: 1px solid var(--line); }
   .feed li:first-child { border-top: 0; }
   .feed .when { text-align: right; font-size: 13px; color: var(--muted); }
-  .empty { padding: 16px; color: var(--muted); }
+  .feed .when .win { display: block; }
+  .feed .line2 { font-size: 13px; margin-top: 2px; }
 
   .thumb { width: 40px; height: 40px; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid var(--line); }
   .thumb.blank { display: inline-block; }
 
+  .more { display: block; width: 100%; padding: 11px; border: 0; border-top: 1px solid var(--line); background: none;
+          color: var(--accent); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+  /* controls */
   .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
   .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  .seg button { border: 0; background: var(--card); color: var(--ink); padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .seg button { border: 0; background: var(--card); color: var(--ink); padding: 7px 14px; font: inherit; font-size: 14px; cursor: pointer; }
   .seg button + button { border-left: 1px solid var(--line); }
   .seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-  select { font: inherit; font-size: 13px; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  select { font: inherit; font-size: 14px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
 
+  /* right now: brand cards with product rows */
   .brand { margin-bottom: 12px; overflow: hidden; }
   .brand > header { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 14px; border-bottom: 1px solid var(--line); gap: 12px; }
   .brand > header h3 { margin: 0; font-size: 16px; }
-  table { width: 100%; border-collapse: collapse; }
-  .brand table { table-layout: fixed; }
-  .brand col.c-prod { width: auto; } .brand col.c-store { width: 160px; } .brand col.c-status { width: 190px; }
-  .brand col.c-price { width: 110px; } .brand col.c-change { width: 170px; }
-  .pname { overflow-wrap: break-word; }
-  .price-sm { display: none; }
-  #patterns:empty { display: none; }
-  td, th { padding: 9px 14px; text-align: left; vertical-align: middle; }
-  th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-  tbody tr + tr td { border-top: 1px solid var(--line); }
-  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .prod { display: flex; gap: 10px; align-items: center; }
-  .prod .pname { font-size: 14px; }
-  .prod .meta { font-size: 12px; color: var(--muted); }
+  .items-head, .item {
+    display: grid; column-gap: 14px; align-items: center; padding: 9px 14px;
+    grid-template-columns: 40px minmax(0, 1fr) 150px 190px 100px 170px;
+    grid-template-areas: "thumb prod store status price change";
+  }
+  .items-head { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding-top: 10px; padding-bottom: 6px; }
+  .items-head .ih-prod { grid-column: thumb-start / prod-end; }
+  .item + .item { border-top: 1px solid var(--line); }
+  .item .thumb { grid-area: thumb; }
+  .i-prod { grid-area: prod; min-width: 0; overflow-wrap: break-word; }
+  .i-prod .meta { font-size: 12px; color: var(--muted); }
+  .i-store { grid-area: store; }
+  .i-status { grid-area: status; }
+  .i-price { grid-area: price; }
+  .i-change { grid-area: change; font-size: 13px; }
+  .i-change .sub2 { font-size: 12px; color: var(--muted); }
 
   .pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
   .pill.in { background: var(--in-soft); color: var(--in); }
@@ -89,27 +115,103 @@
   .pill.top { background: var(--accent-soft); color: var(--accent); }
   .was { text-decoration: line-through; color: var(--muted); font-size: 12px; margin-left: 4px; }
 
-  .grid-wrap { overflow-x: auto; }
-  .heat td, .heat th { text-align: center; padding: 6px 8px; font-variant-numeric: tabular-nums; }
-  .heat td:first-child, .heat th:first-child { text-align: left; white-space: nowrap; }
-  .heat td.c { border-radius: 6px; min-width: 38px; }
+  /* patterns */
+  .patterns { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; }
+  .patterns .card { overflow-x: auto; padding: 6px 6px 8px; }
+  .patterns h3 { font-size: 13px; color: var(--muted); font-weight: 600; margin: 6px 8px 4px; }
+  .heat { border-collapse: separate; border-spacing: 3px; width: 100%; }
+  .heat td, .heat th { text-align: center; padding: 5px 4px; font-variant-numeric: tabular-nums; font-size: 13px; }
+  .heat th { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .heat td:first-child, .heat th:first-child { text-align: left; white-space: nowrap; padding-right: 8px; }
+  .heat td.c { border-radius: 6px; min-width: 30px; background: var(--none-soft); }
+  .d-short { display: none; }
 
-  .hist td { font-size: 14px; }
+  /* history */
+  .hist-row {
+    display: grid; column-gap: 12px; align-items: center; padding: 9px 14px; font-size: 14px;
+    grid-template-columns: 170px 165px minmax(0, 1fr) 150px 70px;
+    grid-template-areas: "when change prod store price";
+  }
+  .hist-row + .hist-row { border-top: 1px solid var(--line); }
+  .hist-head { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .h-when { grid-area: when; } .h-change { grid-area: change; } .h-prod { grid-area: prod; min-width: 0; }
+  .h-store { grid-area: store; } .h-price { grid-area: price; text-align: right; }
+
   details { margin-top: 36px; }
-  summary { cursor: pointer; font-weight: 600; }
-  .how { color: var(--muted); font-size: 14px; max-width: 760px; }
+  summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+  .how { color: var(--muted); font-size: 14px; max-width: 760px; padding-left: 20px; }
   .how li { margin: 6px 0; }
-  @media (max-width: 640px) {
-    .hide-sm { display: none; }
-    .brand col.c-store { width: 84px; } .brand col.c-status { width: 116px; }
-    .brand col.c-price, .brand col.c-change { width: 0; }
-    .brand .thumb { display: none; }
-    .price-sm { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .feed li { grid-template-columns: 40px 1fr; }
-    .feed .when { grid-column: 2; text-align: left; }
-    .pill { white-space: normal; }
-    td, th { padding: 8px 10px; }
-    .lastcheck { text-align: left; }
+
+  /* ---------- phones ---------- */
+  @media (max-width: 680px) {
+    :root { --pad: 14px; }
+    main { padding-top: 18px; }
+    h1 { font-size: 21px; }
+    h2 { margin: 28px 0 10px; }
+    .sub { font-size: 13px; }
+    .lastcheck { text-align: left; font-size: 13px; }
+    .lastcheck .lc-next { display: inline; }
+    .lastcheck .lc-next::before { content: " · "; }
+
+    .jump { display: flex; gap: 6px; position: sticky; top: 0; z-index: 10; overflow-x: auto; scrollbar-width: none;
+            margin: 12px calc(-1 * var(--pad)) 0; padding: 8px var(--pad);
+            background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+    .jump::-webkit-scrollbar { display: none; }
+    .jump a { flex: none; text-decoration: none; font-size: 13px; font-weight: 600; padding: 7px 12px;
+              border-radius: 999px; background: var(--card); border: 1px solid var(--line); }
+
+    /* stores collapse into one compact list */
+    .stores { display: block; margin-top: 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+    .store { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+             border: 0; border-radius: 0; background: none; padding: 11px 12px; }
+    .store + .store { border-top: 1px solid var(--line); }
+    .store .chain, .store .addr, .full, .long { display: none; }
+    .short, .brief { display: inline; }
+    .store .name { font-size: 14px; }
+    .store .health { margin-top: 0; text-align: right; flex: none; max-width: 58%; justify-content: flex-end; }
+
+    .feed li { grid-template-columns: 36px minmax(0, 1fr); padding: 11px 12px; align-items: start; }
+    .feed .thumb { width: 36px; height: 36px; }
+    .feed .when { grid-column: 2; text-align: left; font-size: 12px; }
+    .feed .when .win { display: inline; }
+    .feed .when .win::before { content: " · "; }
+
+    .toolbar { gap: 8px; }
+    .toolbar .seg { flex: 1 1 100%; }
+    .seg button { flex: 1; min-height: 40px; }
+    select { flex: 1 1 140px; min-width: 0; min-height: 40px; font-size: 16px; }
+
+    .brand > header { padding: 11px 12px; }
+    .items-head { display: none; }
+    .item {
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      grid-template-areas: "thumb prod price" "thumb store store" "thumb status change";
+      row-gap: 5px; column-gap: 10px; align-items: start; padding: 11px 12px;
+    }
+    .item .thumb { width: 36px; height: 36px; }
+    .i-price { text-align: right; font-weight: 600; }
+    .i-price .was { display: block; margin: 0; }
+    .i-store { font-size: 13px; color: var(--muted); }
+    .i-prod .meta { display: none; }
+    .st-size { display: inline; }
+    .i-status { align-self: center; }
+    .i-change { text-align: right; align-self: center; font-size: 12px; color: var(--muted); }
+    .i-change .sub2 { display: none; }
+    .pill { font-size: 12px; padding: 3px 9px; }
+
+    .patterns { grid-template-columns: 1fr; }
+    .d-long { display: none; } .d-short { display: inline; }
+    .heat td.c { min-width: 0; }
+
+    .hist-head { display: none; }
+    .hist-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "change when" "prod prod" "store price";
+      row-gap: 3px; padding: 10px 12px;
+    }
+    .h-when { text-align: right; font-size: 12px; color: var(--muted); }
+    .h-store { font-size: 13px; color: var(--muted); }
   }
 </style>
 </head>
@@ -123,36 +225,43 @@
     <div class="lastcheck small" id="lastcheck"></div>
   </div>
 
-  <section class="stores" id="stores"></section>
+  <nav class="jump" aria-label="Sections">
+    <a href="#sec-recent">Restocks</a>
+    <a href="#sec-now">In stock now</a>
+    <a href="#sec-patterns">When</a>
+    <a href="#sec-history">History</a>
+  </nav>
 
-  <h2>Recent restocks</h2>
-  <div class="card"><ul class="feed" id="recent"></ul></div>
+  <section class="stores" id="stores" aria-label="Stores"></section>
 
-  <h2>Right now</h2>
+  <h2 id="sec-recent">Recent restocks</h2>
+  <div class="card" id="recent"></div>
+
+  <h2 id="sec-now">Right now</h2>
   <div class="toolbar">
     <div class="seg" id="filter">
       <button data-v="all" class="on">All</button>
       <button data-v="in">In stock only</button>
     </div>
-    <select id="storefilter"><option value="">All stores</option></select>
+    <select id="storefilter" aria-label="Store"><option value="">All stores</option></select>
   </div>
   <div id="now"></div>
 
-  <h2>When restocks happen</h2>
+  <h2 id="sec-patterns">When restocks happen</h2>
   <p class="muted small" id="patterns-note"></p>
-  <div class="card grid-wrap" id="patterns"></div>
+  <div class="patterns" id="patterns"></div>
 
-  <h2>History</h2>
+  <h2 id="sec-history">History</h2>
   <div class="toolbar">
-    <select id="histstore"><option value="">All stores</option></select>
-    <select id="histbrand"><option value="">All brands</option></select>
-    <select id="histtype">
+    <select id="histstore" aria-label="Store"><option value="">All stores</option></select>
+    <select id="histbrand" aria-label="Brand"><option value="">All brands</option></select>
+    <select id="histtype" aria-label="Change">
       <option value="">All changes</option>
       <option value="restock">Restocks and top-ups</option>
       <option value="sold_out">Sold out</option>
     </select>
   </div>
-  <div class="card grid-wrap" id="history"></div>
+  <div class="card" id="history"></div>
 
   <details>
     <summary>How this works</summary>
@@ -170,7 +279,8 @@
 const LABEL = { restock: 'Back in stock', top_up: 'Topped up', sold_out: 'Sold out' };
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const BUCKETS = [['Night', 0, 6], ['Morning', 6, 12], ['Afternoon', 12, 18], ['Evening', 18, 24]];
-let ui = { filter: 'all', store: '' };
+const RECENT_SHOWN = 5, HISTORY_PAGE = 30;
+let ui = { filter: 'all', store: '', recentAll: false, histLimit: HISTORY_PAGE };
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -195,7 +305,7 @@ function ago(ts) {
 function localParts(ts) {
   const p = new Intl.DateTimeFormat('en-US', { timeZone: tz(), weekday: 'short', hour: 'numeric', hourCycle: 'h23' }).formatToParts(new Date(ts));
   const wd = p.find(x => x.type === 'weekday').value;
-  return { wd: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(wd), hour: +p.find(x => x.type === 'hour').value };
+  return { wd: WEEKDAYS.indexOf(wd), hour: +p.find(x => x.type === 'hour').value };
 }
 const money = v => v == null ? '' : `$${v.toFixed(2)}`;
 
@@ -224,64 +334,69 @@ function productLink(p) {
   const label = esc(shortName(p));
   return p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${label}</a>` : label;
 }
-function qtyText(st) {
-  if (!st.in_stock || st.qty == null) return '';
-  return ` · ${st.qty} available`;
-}
 function windowText(ev) {
   if (!ev.after) return fmtFull(ev.ts);
   const day = sameDay(ev.after, ev.ts) ? fmt(ev.ts, { weekday: 'short', month: 'short', day: 'numeric' }) : null;
   return day ? `${day}, ${fmtTime(ev.after)}–${fmtTime(ev.ts)}` : `${fmtFull(ev.after)} – ${fmtFull(ev.ts)}`;
 }
+const pillClass = t => t === 'sold_out' ? 'out' : t === 'top_up' ? 'top' : 'in';
 
 function renderHeader() {
   const s = S();
   if (!s.updated) { $('lastcheck').innerHTML = 'No checks yet'; return; }
   const next = new Date(new Date(s.updated).getTime() + (s.check_every_hours || 3) * 3600e3);
-  $('lastcheck').innerHTML = `Last check <strong>${esc(fmtFull(s.updated))}</strong> · ${esc(ago(s.updated))}<br>
-    <span class="muted">Next around ${esc(fmtTime(next))}</span>`;
+  $('lastcheck').innerHTML = `<span>Last check <strong class="num">${esc(fmtFull(s.updated))}</strong> · ${esc(ago(s.updated))}</span><span class="lc-next">Next around ${esc(fmtTime(next))}</span>`;
 }
 
 function renderStores() {
   const s = S();
   $('stores').innerHTML = storeOrder().map(k => {
     const st = s.stores[k];
-    let health;
+    let dot, long, brief;
     if (st.health === 'error') {
-      health = `<span class="dot error"></span><span>Last check failed ${st.last_attempt ? esc(ago(st.last_attempt)) : ''}: ${esc(st.last_error || '')}${st.last_ok ? ` · last good check ${esc(ago(st.last_ok))}` : ''}</span>`;
+      dot = 'error';
+      long = `Last check failed ${st.last_attempt ? esc(ago(st.last_attempt)) : ''}: ${esc(st.last_error || '')}${st.last_ok ? ` · last good check ${esc(ago(st.last_ok))}` : ''}`;
+      brief = `Check failed${st.last_ok ? ` · data from ${esc(ago(st.last_ok))}` : ''}`;
     } else if (st.health === 'no_online_inventory') {
-      health = `<span class="dot none"></span><span>${esc(st.note || 'No online stock data')}</span>`;
+      dot = 'none';
+      long = esc(st.note || 'No online stock data');
+      brief = 'No online stock data';
     } else if (st.health === 'ok') {
+      dot = 'ok';
       const n = Object.values(s.status).filter(x => x.store === k && x.in_stock).length;
-      health = `<span class="dot ok"></span><span>Set as default store · ${n} carrot juice${n === 1 ? '' : 's'} in stock</span>`;
+      long = `Set as default store · ${n} carrot juice${n === 1 ? '' : 's'} in stock`;
+      brief = `${n} in stock`;
     } else {
-      health = '<span class="dot none"></span><span>Not checked yet</span>';
+      dot = 'none'; long = brief = 'Not checked yet';
     }
-    return `<div class="card store">
-      <div class="chain">${esc(st.chain === 'iga' ? 'IGA' : 'Walmart')}</div>
-      <div class="name">${esc(st.name)}</div>
-      <div class="addr">${esc(st.address)}</div>
-      <div class="health">${health}</div></div>`;
+    return `<div class="card store" title="${esc(st.name)} — ${esc(st.address)}${st.last_error ? `\n${esc(st.last_error)}` : ''}">
+      <div><div class="chain">${esc(st.chain === 'iga' ? 'IGA' : 'Walmart')}</div>
+      <div class="name"><span class="full">${esc(st.name)}</span><span class="short">${esc(st.short)}</span></div>
+      <div class="addr">${esc(st.address)}</div></div>
+      <div class="health"><span class="dot ${dot}"></span><span class="long">${long}</span><span class="brief">${brief}</span></div></div>`;
   }).join('');
 }
 
 function renderRecent() {
   const s = S();
-  const evs = s.events.filter(e => e.type !== 'sold_out').slice(0, 12);
-  if (!evs.length) {
+  const all = s.events.filter(e => e.type !== 'sold_out').slice(0, 30);
+  if (!all.length) {
     const since = s.runs.length ? fmtDay(s.runs[s.runs.length - 1].ts) : 'today';
-    $('recent').innerHTML = `<li class="empty" style="display:block">No restocks detected yet. Tracking started ${esc(since)}: a restock shows up here when a carrot juice goes from out of stock to in stock between two checks, or when Walmart's quantity jumps.</li>`;
+    $('recent').innerHTML = `<div class="empty">No restocks detected yet. Tracking started ${esc(since)}: a restock shows up here when a carrot juice goes from out of stock to in stock between two checks, or when Walmart's quantity jumps.</div>`;
     return;
   }
-  $('recent').innerHTML = evs.map(e => {
+  const evs = ui.recentAll ? all : all.slice(0, RECENT_SHOWN);
+  $('recent').innerHTML = `<ul class="feed">${evs.map(e => {
     const p = s.products[e.product] || {};
-    const qty = e.type === 'top_up' ? ` (${e.qty_before} → ${e.qty})` : (e.qty != null ? ` (${e.qty} available)` : '');
+    const qty = e.type === 'top_up' ? ` (${e.qty_before} → ${e.qty})` : (e.qty != null ? ` · ${e.qty} available` : '');
     return `<li>${thumb(p)}
-      <div><div><strong>${esc(p.brand || '')}</strong> · ${productLink(p)}${p.size ? ` <span class="muted">${esc(p.size)}</span>` : ''}</div>
-      <div class="small"><span class="pill ${e.type === 'top_up' ? 'top' : 'in'}">${LABEL[e.type]}${esc(qty)}</span>
+      <div><div><strong>${esc(p.brand || '')}</strong> · ${productLink(p)}${p.size ? ` <span class="muted nw">${esc(p.size)}</span>` : ''}</div>
+      <div class="line2"><span class="pill ${pillClass(e.type)}">${LABEL[e.type]}${esc(qty)}</span>
         at <strong>${esc(storeName(e.store))}</strong>${e.price != null ? ` · ${money(e.price)}` : ''}</div></div>
-      <div class="when">${esc(ago(e.ts))}<br>${esc(windowText(e))}</div></li>`;
-  }).join('');
+      <div class="when"><span>${esc(ago(e.ts))}</span><span class="win">${esc(windowText(e))}</span></div></li>`;
+  }).join('')}</ul>${all.length > RECENT_SHOWN ? `<button class="more" id="recent-more">${ui.recentAll ? 'Show fewer' : `Show ${all.length - RECENT_SHOWN} more`}</button>` : ''}`;
+  const btn = $('recent-more');
+  if (btn) btn.onclick = () => { ui.recentAll = !ui.recentAll; renderRecent(); };
 }
 
 function renderNow() {
@@ -301,39 +416,40 @@ function renderNow() {
     return;
   }
   $('now').innerHTML = names.map(b => {
-    const rows = brands[b].sort((x, y) => order.indexOf(x.st.store) - order.indexOf(y.st.store) || prettyName(x.p).localeCompare(prettyName(y.p)));
+    const rows = brands[b].sort((x, y) => order.indexOf(x.st.store) - order.indexOf(y.st.store) || shortName(x.p).localeCompare(shortName(y.p)));
     const inStores = new Set(rows.filter(r => r.st.in_stock).map(r => r.st.store));
     return `<section class="card brand"><header><h3>${esc(b)}</h3>
       <span class="small ${inStores.size ? '' : 'muted'}">${inStores.size ? `In stock at ${inStores.size} store${inStores.size === 1 ? '' : 's'}` : 'Not in stock anywhere'}</span></header>
-      <table><colgroup><col class="c-prod"><col class="c-store"><col class="c-status"><col class="c-price hide-sm"><col class="c-change hide-sm"></colgroup>
-      <thead><tr><th>Product</th><th>Store</th><th>Status</th><th class="hide-sm">Price</th><th class="hide-sm">Last change</th></tr></thead><tbody>
+      <div class="items-head"><span class="ih-prod">Product</span><span>Store</span><span>Status</span><span>Price</span><span>Last change</span></div>
       ${rows.map(({ st, p }) => {
         let pill;
-        if (st.in_stock) pill = `<span class="pill in">In stock${esc(qtyText(st))}</span>`;
-        else if (!st.last_in_stock) pill = `<span class="pill na" title="Never seen in stock at this store since tracking began">Not carried / unavailable</span>`;
+        if (st.in_stock) pill = `<span class="pill in">In stock${st.qty != null ? ` · ${st.qty}` : ''}</span>`;
+        else if (!st.last_in_stock) pill = `<span class="pill na" title="Never seen in stock at this store since tracking began">Not carried here</span>`;
         else pill = `<span class="pill out">Out of stock</span>`;
-        const change = st.since_first_check ? `<span class="muted">since tracking began</span>`
+        const change = st.since_first_check ? `<span class="muted">Since tracking began</span>`
           : `${st.in_stock ? 'Restocked' : 'Sold out'} ${esc(ago(st.since))}`;
-        const restock = st.last_restock && !(st.in_stock && st.last_restock === st.since) ? `<div class="small muted">Last restock ${esc(ago(st.last_restock))}</div>` : '';
-        return `<tr><td><div class="prod">${thumb(p)}<div><div class="pname">${productLink(p)}</div><div class="meta">${esc(p.size || '')}</div></div></div></td>
-          <td>${esc(storeName(st.store))}</td><td>${pill}<span class="price-sm">${money(st.price)}</span></td>
-          <td class="num hide-sm">${money(st.price)}${st.regular_price ? `<span class="was">${money(st.regular_price)}</span>` : ''}</td>
-          <td class="small hide-sm">${change}${restock}</td></tr>`;
-      }).join('')}</tbody></table></section>`;
+        const restock = st.last_restock && !(st.in_stock && st.last_restock === st.since) ? `<div class="sub2">Last restock ${esc(ago(st.last_restock))}</div>` : '';
+        return `<div class="item">${thumb(p)}
+          <div class="i-prod">${productLink(p)}<div class="meta">${esc(p.size || '')}</div></div>
+          <div class="i-store">${p.size ? `<span class="st-size">${esc(p.size)} · </span>` : ''}${esc(storeName(st.store))}</div>
+          <div class="i-status">${pill}</div>
+          <div class="i-price num">${money(st.price)}${st.regular_price ? `<span class="was">${money(st.regular_price)}</span>` : ''}</div>
+          <div class="i-change">${change}${restock}</div></div>`;
+      }).join('')}</section>`;
   }).join('');
 }
 
-function heatColor(n, max) {
+function heatStyle(n, max) {
   if (!n) return '';
-  const a = 0.18 + 0.62 * (n / max);
-  return `background: color-mix(in srgb, var(--accent) ${Math.round(a * 100)}%, transparent); color: ${a > 0.55 ? '#fff' : 'inherit'};`;
+  const a = 0.2 + 0.6 * (n / max);
+  return `background: color-mix(in srgb, var(--accent) ${Math.round(a * 100)}%, var(--card)); color: ${a > 0.55 ? '#fff' : 'inherit'};`;
 }
 function renderPatterns() {
   const s = S();
   const evs = s.events.filter(e => e.type !== 'sold_out');
   const days = s.runs.length ? Math.max(1, Math.round((new Date(s.runs[0].ts) - new Date(s.runs[s.runs.length - 1].ts)) / 864e5)) : 0;
   $('patterns-note').textContent = evs.length
-    ? `${evs.length} restock${evs.length === 1 ? '' : 's'} and top-ups detected over ${days} day${days === 1 ? '' : 's'}, by the day and time they were detected. Patterns get more reliable after a few weeks.`
+    ? `${evs.length} restock${evs.length === 1 ? '' : 's'} and top-ups over ${days} day${days === 1 ? '' : 's'}, by when they were detected. Patterns get more reliable after a few weeks.`
     : 'This fills in as restocks are detected. After a few weeks it shows which days and times each store usually restocks.';
   if (!evs.length) { $('patterns').innerHTML = ''; return; }
   const stores = storeOrder().filter(k => evs.some(e => e.store === k));
@@ -346,9 +462,13 @@ function renderPatterns() {
     g.wd[wd]++; g.b[b]++;
     max = Math.max(max, g.wd[wd], g.b[b]);
   }
-  $('patterns').innerHTML = `<table class="heat"><thead><tr><th></th>${WEEKDAYS.map(d => `<th>${d}</th>`).join('')}<th style="width:16px"></th>${BUCKETS.map(b => `<th>${b[0]}</th>`).join('')}</tr></thead><tbody>
-    ${stores.map(k => `<tr><td>${esc(storeName(k))}</td>${grid[k].wd.map(n => `<td class="c" style="${heatColor(n, max)}">${n || ''}</td>`).join('')}<td></td>${grid[k].b.map(n => `<td class="c" style="${heatColor(n, max)}">${n || ''}</td>`).join('')}</tr>`).join('')}
-    </tbody></table>`;
+  const table = (title, heads, key) => `<div class="card"><h3>${title}</h3><table class="heat">
+    <thead><tr><th></th>${heads.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>
+    ${stores.map(k => `<tr><td>${esc(storeName(k))}</td>${grid[k][key].map(n => `<td class="c" style="${heatStyle(n, max)}">${n || ''}</td>`).join('')}</tr>`).join('')}
+    </tbody></table></div>`;
+  $('patterns').innerHTML =
+    table('By day', WEEKDAYS.map(d => `<span class="d-long">${d}</span><span class="d-short">${d[0]}</span>`), 'wd') +
+    table('By time of day', BUCKETS.map(([n, lo, hi]) => `<span class="d-long">${n}</span><span class="d-short">${lo}–${hi}h</span>`), 'b');
 }
 
 function renderHistory() {
@@ -358,15 +478,19 @@ function renderHistory() {
     && (!fb || (s.products[e.product] || {}).brand === fb)
     && (!ft || (ft === 'restock' ? e.type !== 'sold_out' : e.type === ft)));
   if (!evs.length) { $('history').innerHTML = '<div class="empty">No stock changes recorded yet.</div>'; return; }
-  $('history').innerHTML = `<table class="hist"><thead><tr><th>Detected</th><th>Change</th><th>Product</th><th>Store</th><th class="hide-sm">Price</th></tr></thead><tbody>
-    ${evs.slice(0, 400).map(e => {
+  const shown = evs.slice(0, ui.histLimit);
+  $('history').innerHTML = `<div class="hist-row hist-head"><span>Detected</span><span>Change</span><span>Product</span><span>Store</span><span class="h-price">Price</span></div>
+    ${shown.map(e => {
       const p = s.products[e.product] || {};
       const qty = e.type === 'top_up' ? ` ${e.qty_before}→${e.qty}` : (e.type === 'restock' && e.qty != null ? ` (${e.qty})` : '');
-      return `<tr><td class="num">${esc(fmtFull(e.ts))}</td>
-        <td><span class="pill ${e.type === 'sold_out' ? 'out' : e.type === 'top_up' ? 'top' : 'in'}">${LABEL[e.type]}${esc(qty)}</span></td>
-        <td><strong>${esc(p.brand || '')}</strong> · ${esc(shortName(p))} <span class="muted">${esc(p.size || '')}</span></td>
-        <td>${esc(storeName(e.store))}</td><td class="num hide-sm">${money(e.price)}</td></tr>`;
-    }).join('')}</tbody></table>`;
+      return `<div class="hist-row"><div class="h-when num">${esc(fmtFull(e.ts))}</div>
+        <div class="h-change"><span class="pill ${pillClass(e.type)}">${LABEL[e.type]}${esc(qty)}</span></div>
+        <div class="h-prod"><strong>${esc(p.brand || '')}</strong> · ${esc(shortName(p))} <span class="muted nw">${esc(p.size || '')}</span></div>
+        <div class="h-store">${esc(storeName(e.store))}</div><div class="h-price num">${money(e.price)}</div></div>`;
+    }).join('')}
+    ${evs.length > shown.length ? `<button class="more" id="hist-more">Show ${Math.min(HISTORY_PAGE, evs.length - shown.length)} more of ${evs.length - shown.length}</button>` : ''}`;
+  const btn = $('hist-more');
+  if (btn) btn.onclick = () => { ui.histLimit += HISTORY_PAGE; renderHistory(); };
 }
 
 function fillSelect(id, entries) {
@@ -396,7 +520,7 @@ $('filter').addEventListener('click', e => {
   renderNow();
 });
 $('storefilter').addEventListener('change', e => { ui.store = e.target.value; renderNow(); });
-for (const id of ['histstore', 'histbrand', 'histtype']) $(id).addEventListener('change', renderHistory);
+for (const id of ['histstore', 'histbrand', 'histtype']) $(id).addEventListener('change', () => { ui.histLimit = HISTORY_PAGE; renderHistory(); });
 
 // Pick up new data without a manual reload (works on GitHub Pages and from disk).
 function reloadData() {
@@ -408,6 +532,8 @@ function reloadData() {
 }
 setInterval(reloadData, 15 * 60 * 1000);
 setInterval(renderHeader, 60 * 1000);
+// Phones often resume a tab hours later: refresh as soon as it becomes visible again.
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reloadData(); });
 </script>
 <script src="data/state.js" onload="render()" onerror="render()"></script>
 </body>
