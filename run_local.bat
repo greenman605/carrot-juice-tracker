@@ -1,5 +1,5 @@
 @echo off
-rem Run one stock check on this PC, then open the tracker page.
+rem Run one stock check on this PC, push it to GitHub, then open the tracker page.
 rem   run_local.bat          check now, then open the page
 rem   run_local.bat view     just open the page
 cd /d "%~dp0"
@@ -11,7 +11,7 @@ if not exist ".venv\Scripts\python.exe" (
   py -m venv .venv || goto fail
   ".venv\Scripts\python.exe" -m pip install -q -r requirements.txt || goto fail
 )
-".venv\Scripts\python.exe" -m tracker
+".venv\Scripts\python.exe" -m tracker --publish
 
 :open
 start "" "%~dp0docs\index.html"

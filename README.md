@@ -1,7 +1,12 @@
 # Carrot juice restock tracker — Saint-Hyacinthe
 
 Tracks when Walmart and IGA in Saint-Hyacinthe restock carrot juice, brand by brand.
-A GitHub Action checks every 3 hours and publishes the results to GitHub Pages.
+A scheduled task on a home PC checks every 3 hours and pushes the results here;
+GitHub Pages serves the page: https://kourosch.github.io/carrot-juice-tracker/
+
+Why not GitHub Actions? Walmart and IGA both block cloud servers (Walmart answers
+HTTP 429, IGA HTTP 403 from GitHub's runners), while the same requests work from a home
+connection.
 
 | Store | How stock is read |
 |---|---|
@@ -15,18 +20,21 @@ A GitHub Action checks every 3 hours and publishes the results to GitHub Pages.
 
 ## Use it
 
-- **Hosted:** the GitHub Pages URL for this repo (Settings → Pages).
-- **On this PC:** double-click `run_local.bat` to run a check and open the page, or
-  `run_local.bat view` to just open it.
-- **Check now on GitHub:** Actions → *Check carrot juice stock* → *Run workflow*.
+- **Hosted:** https://kourosch.github.io/carrot-juice-tracker/
+- **Check now:** double-click `run_local.bat` (checks, pushes to GitHub, opens the page), or
+  `run_local.bat view` to just open the local copy.
+- **Schedule:** `schedule_task.ps1` registers the Windows task *Carrot juice tracker*
+  (every 3 hours while you're logged in; a missed check runs when the PC wakes).
+  Remove it with `schedule_task.ps1 -Remove`. Output: `logs\tracker.log`.
 
 ## Files
 
 - `config.json` — stores, search terms, brand names, check interval.
-- `tracker/` — the checker (`python -m tracker`, or `--only walmart` / `--only iga`).
+- `tracker/` — the checker (`python -m tracker`, plus `--only walmart|iga`, `--publish`
+  to pull/commit/push, `--log FILE`).
 - `docs/index.html` — the page. `docs/data/state.json` holds current status and every change;
   `state.js` is the same data, so the page also works when opened from disk.
-- `.github/workflows/check-stock.yml` — the 3-hour schedule.
+- `schedule_task.ps1` — installs the 3-hour Windows scheduled task.
 
 ## Adding a product or store
 
@@ -41,8 +49,9 @@ Each store card on the page shows whether its last check worked. Common causes:
 
 - **Walmart changed its site build.** The checker re-reads its query ids from walmart.ca
   automatically and saves them to `tracker/walmart_ops.json`.
-- **Blocked by bot protection.** The checks are deliberately slow (one every few seconds,
-  every 3 hours). If GitHub's servers get blocked but your PC does not, run the check
-  from your PC with Task Scheduler instead (see `run_local.bat`) and push the data.
+- **Blocked by bot protection.** The checks are deliberately slow (one request every few
+  seconds, every 3 hours). If the home connection ever gets blocked too, wait a day before
+  retrying rather than checking more often.
+- **Page not updating.** Look at `logs\tracker.log`; a failed push is retried on the next run.
 - **IGA moved its online grocery.** IGA's new site is iga.ca; this uses the store-selection
   and product pages still served at commerce.iga.net.
