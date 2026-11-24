@@ -1,0 +1,61 @@
+{
+  "timezone": "America/Toronto",
+  "check_every_hours": 3,
+  "top_up_min_increase": 3,
+  "match": {
+    "product_words": ["carrot", "carotte", "carottes"],
+    "juice_words": ["juice", "jus"]
+  },
+  "known_brands": [
+    "Bolthouse Farms", "Greenhouse", "Tradition", "Bioitalia", "Lakewood", "Biotta",
+    "Compliments", "Great Value", "Natur-A", "Rabenhorst", "V8", "Suja", "Del Monte",
+    "Oasis", "Allen's", "Sunrype", "Kiju", "Pomona", "Naturo", "Rise", "Evolve",
+    "Sélection", "Selection", "Irresistibles", "Our Finest", "Life Smart"
+  ],
+  "walmart": {
+    "search_terms": ["carrot juice", "jus de carotte"],
+    "stores": [
+      {
+        "key": "walmart-3137",
+        "id": "3137",
+        "name": "Walmart Supercentre Saint-Hyacinthe",
+        "short": "Walmart",
+        "address": "5950 rue Martineau, Saint-Hyacinthe, QC J2R 2H6",
+        "postal_code": "J2R 2H6"
+      }
+    ]
+  },
+  "iga": {
+    "search_terms": ["jus de carotte", "jus carotte", "carrot juice"],
+    "search_near": { "latitude": 45.630, "longitude": -72.957 },
+    "stores": [
+      {
+        "key": "iga-10713",
+        "id": "50cad8c9-05c6-423d-9b10-7ab1b95c8e86",
+        "number": "10713",
+        "name": "IGA extra Alimentation Sogesco",
+        "short": "IGA extra Sogesco",
+        "address": "3000 boul. Laframboise, Saint-Hyacinthe, QC J2S 4Z4",
+        "postal_code": "J2S4Z4"
+      },
+      {
+        "key": "iga-14285",
+        "id": "c47c960f-9502-4ecd-980b-04ab7228c9be",
+        "number": "14285",
+        "name": "IGA Saint-Hyacinthe Laurier Ouest",
+        "short": "IGA Laurier Ouest",
+        "address": "5445 rue Laurier Ouest, Saint-Hyacinthe, QC J2S 3V6",
+        "postal_code": "J2S3V6"
+      },
+      {
+        "key": "iga-10714",
+        "id": "4ccfb4d6-e3c8-4167-8462-115099937539",
+        "number": "10714",
+        "name": "IGA Saint-Hyacinthe Saint-Charles",
+        "short": "IGA Saint-Charles",
+        "address": "2260 rue Saint-Charles, Saint-Hyacinthe, QC J2T 1V5",
+        "postal_code": "J2T1V5"
+      }
+    ]
+  }
+}

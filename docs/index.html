@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrot juice restock tracker · Saint-Hyacinthe</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥕</text></svg>">
+<style>
+  :root {
+    --bg: #faf8f5; --card: #ffffff; --ink: #1f1d1a; --muted: #6b665e; --line: #e8e3da;
+    --accent: #d9480f; --accent-soft: #fff0e6;
+    --in: #2b8a3e; --in-soft: #e6f4ea; --out: #b02a2a; --out-soft: #fbeaea;
+    --none: #8a847a; --none-soft: #f1eee9; --warn: #b35c00; --warn-soft: #fff4e0;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513; --card: #201f1c; --ink: #ece8e1; --muted: #a39d93; --line: #34312c;
+      --accent: #ff8a4c; --accent-soft: #3a2416;
+      --in: #6cc581; --in-soft: #1d3324; --out: #f08080; --out-soft: #3a1f1f;
+      --none: #9a948a; --none-soft: #2a2825; --warn: #f0a24a; --warn-soft: #3a2c16;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 28px 20px 60px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 17px; margin: 36px 0 12px; }
+  .sub { color: var(--muted); margin: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; justify-content: space-between; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+  a { color: inherit; text-decoration-color: var(--line); text-underline-offset: 2px; }
+  a:hover { text-decoration-color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+
+  .lastcheck { text-align: right; }
+  .lastcheck strong { font-variant-numeric: tabular-nums; }
+
+  .stores { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-top: 20px; }
+  .store { padding: 12px 14px; }
+  .store .name { font-weight: 600; }
+  .store .addr { font-size: 13px; color: var(--muted); }
+  .store .health { font-size: 13px; margin-top: 8px; display: flex; gap: 6px; align-items: baseline; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; transform: translateY(-1px); }
+  .dot.ok { background: var(--in); } .dot.error { background: var(--out); } .dot.none { background: var(--none); }
+  .chain { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+
+  .feed { list-style: none; margin: 0; padding: 0; }
+  .feed li { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center;
+             padding: 10px 14px; border-top: 1px solid var(--line); }
+  .feed li:first-child { border-top: 0; }
+  .feed .when { text-align: right; font-size: 13px; color: var(--muted); }
+  .empty { padding: 16px; color: var(--muted); }
+
+  .thumb { width: 40px; height: 40px; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid var(--line); }
+  .thumb.blank { display: inline-block; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { border: 0; background: var(--card); color: var(--ink); padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  select { font: inherit; font-size: 13px; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+
+  .brand { margin-bottom: 12px; overflow: hidden; }
+  .brand > header { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 14px; border-bottom: 1px solid var(--line); gap: 12px; }
+  .brand > header h3 { margin: 0; font-size: 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  .brand table { table-layout: fixed; }
+  .brand col.c-prod { width: auto; } .brand col.c-store { width: 160px; } .brand col.c-status { width: 190px; }
+  .brand col.c-price { width: 110px; } .brand col.c-change { width: 170px; }
+  .pname { overflow-wrap: break-word; }
+  .price-sm { display: none; }
+  #patterns:empty { display: none; }
+  td, th { padding: 9px 14px; text-align: left; vertical-align: middle; }
+  th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  tbody tr + tr td { border-top: 1px solid var(--line); }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .prod { display: flex; gap: 10px; align-items: center; }
+  .prod .pname { font-size: 14px; }
+  .prod .meta { font-size: 12px; color: var(--muted); }
+
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .pill.in { background: var(--in-soft); color: var(--in); }
+  .pill.out { background: var(--out-soft); color: var(--out); }
+  .pill.na { background: var(--none-soft); color: var(--none); }
+  .pill.top { background: var(--accent-soft); color: var(--accent); }
+  .was { text-decoration: line-through; color: var(--muted); font-size: 12px; margin-left: 4px; }
+
+  .grid-wrap { overflow-x: auto; }
+  .heat td, .heat th { text-align: center; padding: 6px 8px; font-variant-numeric: tabular-nums; }
+  .heat td:first-child, .heat th:first-child { text-align: left; white-space: nowrap; }
+  .heat td.c { border-radius: 6px; min-width: 38px; }
+
+  .hist td { font-size: 14px; }
+  details { margin-top: 36px; }
+  summary { cursor: pointer; font-weight: 600; }
+  .how { color: var(--muted); font-size: 14px; max-width: 760px; }
+  .how li { margin: 6px 0; }
+  @media (max-width: 640px) {
+    .hide-sm { display: none; }
+    .brand col.c-store { width: 84px; } .brand col.c-status { width: 116px; }
+    .brand col.c-price, .brand col.c-change { width: 0; }
+    .brand .thumb { display: none; }
+    .price-sm { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .feed li { grid-template-columns: 40px 1fr; }
+    .feed .when { grid-column: 2; text-align: left; }
+    .pill { white-space: normal; }
+    td, th { padding: 8px 10px; }
+    .lastcheck { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="row">
+    <div>
+      <h1>🥕 Carrot juice restock tracker</h1>
+      <p class="sub">Walmart and IGA in Saint-Hyacinthe · stock checked every few hours</p>
+    </div>
+    <div class="lastcheck small" id="lastcheck"></div>
+  </div>
+
+  <section class="stores" id="stores"></section>
+
+  <h2>Recent restocks</h2>
+  <div class="card"><ul class="feed" id="recent"></ul></div>
+
+  <h2>Right now</h2>
+  <div class="toolbar">
+    <div class="seg" id="filter">
+      <button data-v="all" class="on">All</button>
+      <button data-v="in">In stock only</button>
+    </div>
+    <select id="storefilter"><option value="">All stores</option></select>
+  </div>
+  <div id="now"></div>
+
+  <h2>When restocks happen</h2>
+  <p class="muted small" id="patterns-note"></p>
+  <div class="card grid-wrap" id="patterns"></div>
+
+  <h2>History</h2>
+  <div class="toolbar">
+    <select id="histstore"><option value="">All stores</option></select>
+    <select id="histbrand"><option value="">All brands</option></select>
+    <select id="histtype">
+      <option value="">All changes</option>
+      <option value="restock">Restocks and top-ups</option>
+      <option value="sold_out">Sold out</option>
+    </select>
+  </div>
+  <div class="card grid-wrap" id="history"></div>
+
+  <details>
+    <summary>How this works</summary>
+    <ul class="how">
+      <li>Every few hours a script sets each store as the <em>default store</em> on walmart.ca and iga.net, exactly as the "make this my store" button does, then reads carrot juice availability for that store.</li>
+      <li><strong>Walmart</strong> reports a quantity: the units it will sell online from that store. A <em>restock</em> is when a product goes from out of stock to in stock; a <em>top-up</em> is when the quantity jumps by 3 or more without selling out first.</li>
+      <li><strong>IGA</strong> only says whether a product is available at the selected store, with no quantity. IGA Saint-Charles does not take online orders, so IGA publishes no stock for it.</li>
+      <li>Times are when the change was <em>detected</em>; the change happened some time since the previous check.</li>
+      <li>Online stock is the stores' own figure, but it can lag the shelf by a few hours, and Walmart holds back a small buffer.</li>
+    </ul>
+  </details>
+</main>
+
+<script>
+const LABEL = { restock: 'Back in stock', top_up: 'Topped up', sold_out: 'Sold out' };
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const BUCKETS = [['Night', 0, 6], ['Morning', 6, 12], ['Afternoon', 12, 18], ['Evening', 18, 24]];
+let ui = { filter: 'all', store: '' };
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const S = () => window.TRACKER_STATE;
+const tz = () => (S() && S().timezone) || 'America/Toronto';
+
+function fmt(ts, opts) {
+  return new Intl.DateTimeFormat('en-CA', Object.assign({ timeZone: tz() }, opts)).format(new Date(ts));
+}
+const fmtFull = ts => fmt(ts, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+const fmtTime = ts => fmt(ts, { hour: 'numeric', minute: '2-digit' });
+const fmtDay = ts => fmt(ts, { month: 'short', day: 'numeric' });
+function sameDay(a, b) { return fmt(a, { year: 'numeric', month: 'numeric', day: 'numeric' }) === fmt(b, { year: 'numeric', month: 'numeric', day: 'numeric' }); }
+function ago(ts) {
+  const m = (Date.now() - new Date(ts)) / 60000;
+  if (m < 2) return 'just now';
+  if (m < 60) return `${Math.round(m)} min ago`;
+  const h = m / 60;
+  if (h < 36) return `${Math.round(h)} h ago`;
+  return `${Math.round(h / 24)} days ago`;
+}
+function localParts(ts) {
+  const p = new Intl.DateTimeFormat('en-US', { timeZone: tz(), weekday: 'short', hour: 'numeric', hourCycle: 'h23' }).formatToParts(new Date(ts));
+  const wd = p.find(x => x.type === 'weekday').value;
+  return { wd: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(wd), hour: +p.find(x => x.type === 'hour').value };
+}
+const money = v => v == null ? '' : `$${v.toFixed(2)}`;
+
+function prettyName(p) {
+  let n = p.name || '';
+  const letters = n.replace(/[^A-Za-zÀ-ÿ]/g, '');
+  const upper = letters.replace(/[^A-ZÀ-Þ]/g, '').length;
+  if (letters && upper / letters.length > 0.7) n = n.charAt(0) + n.slice(1).toLowerCase();
+  return n.replace(/(\d)ml\b/gi, '$1 mL');
+}
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Name without the brand in front or the size at the end (both are shown separately).
+function shortName(p) {
+  let n = prettyName(p);
+  if (p.brand) n = n.replace(new RegExp('^' + reEsc(p.brand) + '\\s*', 'i'), '');
+  if (p.size) n = n.replace(new RegExp(',?\\s*' + reEsc(p.size).replace(' ', '\\s*') + '\\s*$', 'i'), '');
+  n = n.trim() || prettyName(p);
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+function storeOrder() { return Object.keys(S().stores); }
+function storeName(k) { return (S().stores[k] || {}).short || k; }
+function thumb(p) {
+  return p.image ? `<img class="thumb" loading="lazy" src="${esc(p.image)}" alt="">` : '<span class="thumb blank"></span>';
+}
+function productLink(p) {
+  const label = esc(shortName(p));
+  return p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${label}</a>` : label;
+}
+function qtyText(st) {
+  if (!st.in_stock || st.qty == null) return '';
+  return ` · ${st.qty} available`;
+}
+function windowText(ev) {
+  if (!ev.after) return fmtFull(ev.ts);
+  const day = sameDay(ev.after, ev.ts) ? fmt(ev.ts, { weekday: 'short', month: 'short', day: 'numeric' }) : null;
+  return day ? `${day}, ${fmtTime(ev.after)}–${fmtTime(ev.ts)}` : `${fmtFull(ev.after)} – ${fmtFull(ev.ts)}`;
+}
+
+function renderHeader() {
+  const s = S();
+  if (!s.updated) { $('lastcheck').innerHTML = 'No checks yet'; return; }
+  const next = new Date(new Date(s.updated).getTime() + (s.check_every_hours || 3) * 3600e3);
+  $('lastcheck').innerHTML = `Last check <strong>${esc(fmtFull(s.updated))}</strong> · ${esc(ago(s.updated))}<br>
+    <span class="muted">Next around ${esc(fmtTime(next))}</span>`;
+}
+
+function renderStores() {
+  const s = S();
+  $('stores').innerHTML = storeOrder().map(k => {
+    const st = s.stores[k];
+    let health;
+    if (st.health === 'error') {
+      health = `<span class="dot error"></span><span>Last check failed ${st.last_attempt ? esc(ago(st.last_attempt)) : ''}: ${esc(st.last_error || '')}${st.last_ok ? ` · last good check ${esc(ago(st.last_ok))}` : ''}</span>`;
+    } else if (st.health === 'no_online_inventory') {
+      health = `<span class="dot none"></span><span>${esc(st.note || 'No online stock data')}</span>`;
+    } else if (st.health === 'ok') {
+      const n = Object.values(s.status).filter(x => x.store === k && x.in_stock).length;
+      health = `<span class="dot ok"></span><span>Set as default store · ${n} carrot juice${n === 1 ? '' : 's'} in stock</span>`;
+    } else {
+      health = '<span class="dot none"></span><span>Not checked yet</span>';
+    }
+    return `<div class="card store">
+      <div class="chain">${esc(st.chain === 'iga' ? 'IGA' : 'Walmart')}</div>
+      <div class="name">${esc(st.name)}</div>
+      <div class="addr">${esc(st.address)}</div>
+      <div class="health">${health}</div></div>`;
+  }).join('');
+}
+
+function renderRecent() {
+  const s = S();
+  const evs = s.events.filter(e => e.type !== 'sold_out').slice(0, 12);
+  if (!evs.length) {
+    const since = s.runs.length ? fmtDay(s.runs[s.runs.length - 1].ts) : 'today';
+    $('recent').innerHTML = `<li class="empty" style="display:block">No restocks detected yet. Tracking started ${esc(since)}: a restock shows up here when a carrot juice goes from out of stock to in stock between two checks, or when Walmart's quantity jumps.</li>`;
+    return;
+  }
+  $('recent').innerHTML = evs.map(e => {
+    const p = s.products[e.product] || {};
+    const qty = e.type === 'top_up' ? ` (${e.qty_before} → ${e.qty})` : (e.qty != null ? ` (${e.qty} available)` : '');
+    return `<li>${thumb(p)}
+      <div><div><strong>${esc(p.brand || '')}</strong> · ${productLink(p)}${p.size ? ` <span class="muted">${esc(p.size)}</span>` : ''}</div>
+      <div class="small"><span class="pill ${e.type === 'top_up' ? 'top' : 'in'}">${LABEL[e.type]}${esc(qty)}</span>
+        at <strong>${esc(storeName(e.store))}</strong>${e.price != null ? ` · ${money(e.price)}` : ''}</div></div>
+      <div class="when">${esc(ago(e.ts))}<br>${esc(windowText(e))}</div></li>`;
+  }).join('');
+}
+
+function renderNow() {
+  const s = S();
+  const order = storeOrder();
+  const brands = {};
+  for (const st of Object.values(s.status)) {
+    if (ui.filter === 'in' && !st.in_stock) continue;
+    if (ui.store && st.store !== ui.store) continue;
+    const p = s.products[st.product];
+    if (!p) continue;
+    (brands[p.brand] = brands[p.brand] || []).push({ st, p });
+  }
+  const names = Object.keys(brands).sort((a, b) => a.localeCompare(b));
+  if (!names.length) {
+    $('now').innerHTML = `<div class="card empty">${ui.filter === 'in' ? 'Nothing in stock right now for this selection.' : 'No data yet.'}</div>`;
+    return;
+  }
+  $('now').innerHTML = names.map(b => {
+    const rows = brands[b].sort((x, y) => order.indexOf(x.st.store) - order.indexOf(y.st.store) || prettyName(x.p).localeCompare(prettyName(y.p)));
+    const inStores = new Set(rows.filter(r => r.st.in_stock).map(r => r.st.store));
+    return `<section class="card brand"><header><h3>${esc(b)}</h3>
+      <span class="small ${inStores.size ? '' : 'muted'}">${inStores.size ? `In stock at ${inStores.size} store${inStores.size === 1 ? '' : 's'}` : 'Not in stock anywhere'}</span></header>
+      <table><colgroup><col class="c-prod"><col class="c-store"><col class="c-status"><col class="c-price hide-sm"><col class="c-change hide-sm"></colgroup>
+      <thead><tr><th>Product</th><th>Store</th><th>Status</th><th class="hide-sm">Price</th><th class="hide-sm">Last change</th></tr></thead><tbody>
+      ${rows.map(({ st, p }) => {
+        let pill;
+        if (st.in_stock) pill = `<span class="pill in">In stock${esc(qtyText(st))}</span>`;
+        else if (!st.last_in_stock) pill = `<span class="pill na" title="Never seen in stock at this store since tracking began">Not carried / unavailable</span>`;
+        else pill = `<span class="pill out">Out of stock</span>`;
+        const change = st.since_first_check ? `<span class="muted">since tracking began</span>`
+          : `${st.in_stock ? 'Restocked' : 'Sold out'} ${esc(ago(st.since))}`;
+        const restock = st.last_restock && !(st.in_stock && st.last_restock === st.since) ? `<div class="small muted">Last restock ${esc(ago(st.last_restock))}</div>` : '';
+        return `<tr><td><div class="prod">${thumb(p)}<div><div class="pname">${productLink(p)}</div><div class="meta">${esc(p.size || '')}</div></div></div></td>
+          <td>${esc(storeName(st.store))}</td><td>${pill}<span class="price-sm">${money(st.price)}</span></td>
+          <td class="num hide-sm">${money(st.price)}${st.regular_price ? `<span class="was">${money(st.regular_price)}</span>` : ''}</td>
+          <td class="small hide-sm">${change}${restock}</td></tr>`;
+      }).join('')}</tbody></table></section>`;
+  }).join('');
+}
+
+function heatColor(n, max) {
+  if (!n) return '';
+  const a = 0.18 + 0.62 * (n / max);
+  return `background: color-mix(in srgb, var(--accent) ${Math.round(a * 100)}%, transparent); color: ${a > 0.55 ? '#fff' : 'inherit'};`;
+}
+function renderPatterns() {
+  const s = S();
+  const evs = s.events.filter(e => e.type !== 'sold_out');
+  const days = s.runs.length ? Math.max(1, Math.round((new Date(s.runs[0].ts) - new Date(s.runs[s.runs.length - 1].ts)) / 864e5)) : 0;
+  $('patterns-note').textContent = evs.length
+    ? `${evs.length} restock${evs.length === 1 ? '' : 's'} and top-ups detected over ${days} day${days === 1 ? '' : 's'}, by the day and time they were detected. Patterns get more reliable after a few weeks.`
+    : 'This fills in as restocks are detected. After a few weeks it shows which days and times each store usually restocks.';
+  if (!evs.length) { $('patterns').innerHTML = ''; return; }
+  const stores = storeOrder().filter(k => evs.some(e => e.store === k));
+  const grid = {};
+  let max = 1;
+  for (const e of evs) {
+    const { wd, hour } = localParts(e.ts);
+    const b = BUCKETS.findIndex(([, lo, hi]) => hour >= lo && hour < hi);
+    const g = grid[e.store] = grid[e.store] || { wd: Array(7).fill(0), b: Array(4).fill(0) };
+    g.wd[wd]++; g.b[b]++;
+    max = Math.max(max, g.wd[wd], g.b[b]);
+  }
+  $('patterns').innerHTML = `<table class="heat"><thead><tr><th></th>${WEEKDAYS.map(d => `<th>${d}</th>`).join('')}<th style="width:16px"></th>${BUCKETS.map(b => `<th>${b[0]}</th>`).join('')}</tr></thead><tbody>
+    ${stores.map(k => `<tr><td>${esc(storeName(k))}</td>${grid[k].wd.map(n => `<td class="c" style="${heatColor(n, max)}">${n || ''}</td>`).join('')}<td></td>${grid[k].b.map(n => `<td class="c" style="${heatColor(n, max)}">${n || ''}</td>`).join('')}</tr>`).join('')}
+    </tbody></table>`;
+}
+
+function renderHistory() {
+  const s = S();
+  const fs = $('histstore').value, fb = $('histbrand').value, ft = $('histtype').value;
+  const evs = s.events.filter(e => (!fs || e.store === fs)
+    && (!fb || (s.products[e.product] || {}).brand === fb)
+    && (!ft || (ft === 'restock' ? e.type !== 'sold_out' : e.type === ft)));
+  if (!evs.length) { $('history').innerHTML = '<div class="empty">No stock changes recorded yet.</div>'; return; }
+  $('history').innerHTML = `<table class="hist"><thead><tr><th>Detected</th><th>Change</th><th>Product</th><th>Store</th><th class="hide-sm">Price</th></tr></thead><tbody>
+    ${evs.slice(0, 400).map(e => {
+      const p = s.products[e.product] || {};
+      const qty = e.type === 'top_up' ? ` ${e.qty_before}→${e.qty}` : (e.type === 'restock' && e.qty != null ? ` (${e.qty})` : '');
+      return `<tr><td class="num">${esc(fmtFull(e.ts))}</td>
+        <td><span class="pill ${e.type === 'sold_out' ? 'out' : e.type === 'top_up' ? 'top' : 'in'}">${LABEL[e.type]}${esc(qty)}</span></td>
+        <td><strong>${esc(p.brand || '')}</strong> · ${esc(shortName(p))} <span class="muted">${esc(p.size || '')}</span></td>
+        <td>${esc(storeName(e.store))}</td><td class="num hide-sm">${money(e.price)}</td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+function fillSelect(id, entries) {
+  const el = $(id), keep = el.value;
+  el.length = 1;
+  for (const [v, t] of entries) el.add(new Option(t, v));
+  el.value = entries.some(([v]) => v === keep) ? keep : '';
+}
+
+function render() {
+  const s = S();
+  if (!s) {
+    document.querySelector('main').insertAdjacentHTML('beforeend', '<p class="card empty">No data file found. Run the tracker once (run_local.bat) to create docs/data/state.js.</p>');
+    return;
+  }
+  const storeEntries = storeOrder().filter(k => s.stores[k].health !== 'no_online_inventory').map(k => [k, storeName(k)]);
+  fillSelect('storefilter', storeEntries);
+  fillSelect('histstore', storeEntries);
+  fillSelect('histbrand', [...new Set(Object.values(s.products).map(p => p.brand))].sort().map(b => [b, b]));
+  renderHeader(); renderStores(); renderRecent(); renderNow(); renderPatterns(); renderHistory();
+}
+
+$('filter').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  ui.filter = b.dataset.v;
+  for (const x of $('filter').children) x.classList.toggle('on', x === b);
+  renderNow();
+});
+$('storefilter').addEventListener('change', e => { ui.store = e.target.value; renderNow(); });
+for (const id of ['histstore', 'histbrand', 'histtype']) $(id).addEventListener('change', renderHistory);
+
+// Pick up new data without a manual reload (works on GitHub Pages and from disk).
+function reloadData() {
+  const tag = document.createElement('script');
+  tag.src = `data/state.js?t=${Date.now()}`;
+  tag.onload = () => { tag.remove(); render(); };
+  tag.onerror = () => tag.remove();
+  document.body.appendChild(tag);
+}
+setInterval(reloadData, 15 * 60 * 1000);
+setInterval(renderHeader, 60 * 1000);
+</script>
+<script src="data/state.js" onload="render()" onerror="render()"></script>
+</body>
+</html>
