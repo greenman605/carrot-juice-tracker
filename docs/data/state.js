@@ -1,14 +1,14 @@
 window.TRACKER_STATE = {
  "schema": 1,
- "updated": "2026-11-27T20:17:01Z",
+ "updated": "2026-11-27T23:17:02Z",
  "stores": {
   "walmart-3137": {
    "chain": "walmart",
    "name": "Walmart Supercentre Saint-Hyacinthe",
    "short": "Walmart",
    "address": "5950 rue Martineau, Saint-Hyacinthe, QC J2R 2H6",
-   "last_attempt": "2026-11-27T20:17:01Z",
-   "last_ok": "2026-11-27T20:17:01Z",
+   "last_attempt": "2026-11-27T23:17:02Z",
+   "last_ok": "2026-11-27T23:17:02Z",
    "last_error": null,
    "online": true,
    "default_store_set": true,
@@ -20,8 +20,8 @@ window.TRACKER_STATE = {
    "name": "IGA extra Alimentation Sogesco",
    "short": "IGA extra Sogesco",
    "address": "3000 boul. Laframboise, Saint-Hyacinthe, QC J2S 4Z4",
-   "last_attempt": "2026-11-27T20:17:01Z",
-   "last_ok": "2026-11-27T20:17:01Z",
+   "last_attempt": "2026-11-27T23:17:02Z",
+   "last_ok": "2026-11-27T23:17:02Z",
    "last_error": null,
    "online": true,
    "default_store_set": true,
@@ -33,8 +33,8 @@ window.TRACKER_STATE = {
    "name": "IGA Saint-Hyacinthe Laurier Ouest",
    "short": "IGA Laurier Ouest",
    "address": "5445 rue Laurier Ouest, Saint-Hyacinthe, QC J2S 3V6",
-   "last_attempt": "2026-11-27T20:17:01Z",
-   "last_ok": "2026-11-27T20:17:01Z",
+   "last_attempt": "2026-11-27T23:17:02Z",
+   "last_ok": "2026-11-27T23:17:02Z",
    "last_error": null,
    "online": true,
    "default_store_set": true,
@@ -46,8 +46,8 @@ window.TRACKER_STATE = {
    "name": "IGA Saint-Hyacinthe Saint-Charles",
    "short": "IGA Saint-Charles",
    "address": "2260 rue Saint-Charles, Saint-Hyacinthe, QC J2T 1V5",
-   "last_attempt": "2026-11-27T20:17:01Z",
-   "last_ok": "2026-11-27T20:17:01Z",
+   "last_attempt": "2026-11-27T23:17:02Z",
+   "last_ok": "2026-11-27T23:17:02Z",
    "last_error": null,
    "online": false,
    "default_store_set": false,
@@ -65,7 +65,7 @@ window.TRACKER_STATE = {
    "size": "900 mL",
    "url": "https://www.walmart.ca/en/ip/Greenhouse-Organic-100-Carrot-Juice-No-Added-Sugar-900-mL/76790G9EAHXH",
    "image": "https://i5.walmartimages.ca/asr/f1644688-f241-4c5e-a3be-5df050e9d865.5e99cbad82a9f56710e3da6c8bf0b7c1.jpeg",
-   "last_listed": "2026-11-27T20:17:01Z"
+   "last_listed": "2026-11-27T23:17:02Z"
   },
   "walmart:6000191284070": {
    "first_seen": "2026-11-24T21:43:39Z",
@@ -76,7 +76,7 @@ window.TRACKER_STATE = {
    "size": "1.54 L",
    "url": "https://www.walmart.ca/en/ip/Bolthouse-Farms-100-Carrot-Juice-1-54-L/6000191284070",
    "image": "https://i5.walmartimages.ca/asr/9878fadb-3bb1-484c-a451-05586da0986a.be68c9be136aa0d862927a109bf291a9.jpeg",
-   "last_listed": "2026-11-27T20:17:01Z"
+   "last_listed": "2026-11-27T23:17:02Z"
   },
   "walmart:23KGJMKL3M7K": {
    "first_seen": "2026-11-24T21:43:39Z",
@@ -87,7 +87,7 @@ window.TRACKER_STATE = {
    "size": "950 mL",
    "url": "https://www.walmart.ca/en/ip/Tradition-Carrot-Juice-950ml-Nutritious-Carrot-juice/23KGJMKL3M7K",
    "image": "https://i5.walmartimages.ca/asr/8f491702-ee78-4ae6-8b75-7eb40c032cd7.e4f4ae6728479b4355730acd24346ed0.jpeg",
-   "last_listed": "2026-11-27T20:17:01Z"
+   "last_listed": "2026-11-27T23:17:02Z"
   },
   "iga:00000_000000007146420040": {
    "first_seen": "2026-11-24T21:43:39Z",
@@ -98,7 +98,7 @@ window.TRACKER_STATE = {
    "size": "450 mL",
    "url": "https://commerce.iga.net/fr/produit/jusde-carottes/00000_000000007146420040",
    "image": "https://sbs-prd-cdn-products.azureedge.net/media/image/product/fr/medium/0007146420040.jpg",
-   "last_listed": "2026-11-27T20:17:01Z"
+   "last_listed": "2026-11-27T23:17:02Z"
   },
   "iga:00000_000000077546298015": {
    "first_seen": "2026-11-24T21:43:39Z",
@@ -109,7 +109,7 @@ window.TRACKER_STATE = {
    "size": "950 mL",
    "url": "https://commerce.iga.net/fr/produit/jusde-carottes-sans-sucre-ajoute/00000_000000077546298015",
    "image": "https://sbs-prd-cdn-products.azureedge.net/media/image/product/fr/medium/0077546298015.jpg",
-   "last_listed": "2026-11-27T20:17:01Z"
+   "last_listed": "2026-11-27T23:17:02Z"
   },
   "iga:00000_000000077546218015": {
    "first_seen": "2026-11-24T21:43:39Z",
@@ -120,7 +120,7 @@ window.TRACKER_STATE = {
    "size": "950 mL",
    "url": "https://commerce.iga.net/fr/produit/tradition-jus-de-carotte-6/950mlcarrote/00000_000000077546218015",
    "image": "https://sbs-prd-cdn-products.azureedge.net/media/image/product/fr/medium/0077546218015.jpg",
-   "last_listed": "2026-11-27T20:17:01Z"
+   "last_listed": "2026-11-27T23:17:02Z"
   },
   "iga:00000_000000066147523904": {
    "first_seen": "2026-11-24T21:43:39Z",
@@ -131,7 +131,7 @@ window.TRACKER_STATE = {
    "size": "750 mL",
    "url": "https://commerce.iga.net/fr/produit/jusde-carottes-biologique/00000_000000066147523904",
    "image": "https://sbs-prd-cdn-products.azureedge.net/media/image/product/fr/medium/0066147523904.jpg",
-   "last_listed": "2026-11-27T20:17:01Z"
+   "last_listed": "2026-11-27T23:17:02Z"
   }
  },
  "status": {
@@ -141,12 +141,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "IN_STOCK",
    "qty": 9,
    "price": 7.97,
    "regular_price": null,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0,
    "qty_history": [
@@ -162,12 +162,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "IN_STOCK",
-   "qty": 5,
+   "qty": 4,
    "price": 8.47,
    "regular_price": null,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0,
    "qty_history": [
@@ -186,6 +186,10 @@ window.TRACKER_STATE = {
     [
      "2026-11-26T20:17:10Z",
      5
+    ],
+    [
+     "2026-11-27T23:17:02Z",
+     4
     ]
    ]
   },
@@ -195,12 +199,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "IN_STOCK",
    "qty": 10,
    "price": 5.97,
    "regular_price": null,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": "2026-11-25T14:36:45Z",
    "restocks": 1,
    "qty_history": [
@@ -228,12 +232,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "available",
    "qty": null,
    "price": 5.99,
    "regular_price": null,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0
   },
@@ -243,12 +247,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "available",
    "qty": null,
    "price": 4.79,
    "regular_price": 5.49,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0
   },
@@ -258,12 +262,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "available",
    "qty": null,
    "price": 5.99,
    "regular_price": 6.99,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0
   },
@@ -273,12 +277,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "available",
    "qty": null,
    "price": 5.99,
    "regular_price": null,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0
   },
@@ -288,12 +292,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "available",
    "qty": null,
    "price": 4.79,
    "regular_price": 5.49,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0
   },
@@ -303,12 +307,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "available",
    "qty": null,
    "price": 5.99,
    "regular_price": 6.99,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0
   },
@@ -318,12 +322,12 @@ window.TRACKER_STATE = {
    "in_stock": true,
    "since": "2026-11-24T21:43:39Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "available",
    "qty": null,
    "price": 7.49,
    "regular_price": null,
-   "last_in_stock": "2026-11-27T20:17:01Z",
+   "last_in_stock": "2026-11-27T23:17:02Z",
    "last_restock": null,
    "restocks": 0
   },
@@ -333,7 +337,7 @@ window.TRACKER_STATE = {
    "in_stock": false,
    "since": "2026-11-24T21:47:01Z",
    "since_first_check": true,
-   "last_checked": "2026-11-27T20:17:01Z",
+   "last_checked": "2026-11-27T23:17:02Z",
    "raw": "not available at this store",
    "qty": null,
    "price": 7.49,
@@ -356,6 +360,36 @@ window.TRACKER_STATE = {
   }
  ],
  "runs": [
+  {
+   "ts": "2026-11-27T23:17:02Z",
+   "seconds": 83,
+   "stores": {
+    "walmart-3137": {
+     "ok": true,
+     "checked": 3,
+     "changes": 0,
+     "online": true
+    },
+    "iga-10713": {
+     "ok": true,
+     "checked": 4,
+     "changes": 0,
+     "online": true
+    },
+    "iga-14285": {
+     "ok": true,
+     "checked": 4,
+     "changes": 0,
+     "online": true
+    },
+    "iga-10714": {
+     "ok": true,
+     "checked": 0,
+     "changes": 0,
+     "online": false
+    }
+   }
+  },
   {
    "ts": "2026-11-27T20:17:01Z",
    "seconds": 81,
